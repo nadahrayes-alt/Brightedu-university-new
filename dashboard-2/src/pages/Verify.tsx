@@ -15,7 +15,7 @@ export function Verify() {
   return (
     <div>
       <PrivacyBanner />
-      <div className="p-12 max-w-5xl mx-auto">
+      <div className="p-12">
         <StudentIdVerificationStep
           onSuccess={() => navigate(next)}
           onBack={() => navigate(-1)}

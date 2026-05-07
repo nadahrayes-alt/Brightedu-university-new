@@ -90,7 +90,7 @@ export function ServiceDetail() {
     : `${service.walkMin} min walk · ${service.meters} m`;
 
   return (
-    <div className="p-12 max-w-7xl mx-auto space-y-6">
+    <div className="p-12 space-y-6">
       {/* Header */}
       <header className="flex items-start justify-between gap-5 flex-wrap">
         <div className="flex items-center gap-5">

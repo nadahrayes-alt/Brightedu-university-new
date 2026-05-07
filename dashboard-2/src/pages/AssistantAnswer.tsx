@@ -27,7 +27,7 @@ export function AssistantAnswer() {
   return (
     <div>
       <PrivacyBanner />
-      <div className="p-12 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="p-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
         <section className="lg:col-span-2 bg-surface border border-border-soft rounded-3xl p-7 flex flex-col gap-5 min-h-[640px]">
           {/* User bubble */}
           <div className="self-start max-w-[80%]">

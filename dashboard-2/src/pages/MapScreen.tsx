@@ -37,7 +37,7 @@ export function MapScreen() {
   }
 
   return (
-    <div className="p-12 max-w-7xl mx-auto">
+    <div className="p-12">
       <div className="flex items-center gap-4 mb-6">
         <button
           onClick={() => navigate(-1)}

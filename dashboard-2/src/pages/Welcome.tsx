@@ -102,7 +102,7 @@ export function Welcome() {
         <div className="absolute -bottom-40 start-1/3 w-[28rem] h-[28rem] rounded-full bg-teal/10 dark:bg-teal/15 blur-[120px]" />
       </div>
 
-      <div className="relative px-6 py-8 sm:px-10 sm:py-12 max-w-6xl mx-auto">
+      <div className="relative px-6 py-8 sm:px-10 sm:py-12">
         {/* Hero */}
         <section className="mb-8">
           <div className="inline-flex items-center gap-2 px-4 h-10 rounded-full bg-primary/15 text-primary text-base font-semibold mb-5">
@@ -169,11 +169,11 @@ export function Welcome() {
           <Arrow className="w-7 h-7 text-primary shrink-0" />
         </button>
 
-        {/* Quick Actions Grid — 2 columns, large cards */}
+        {/* Quick Actions Grid — 1 / 2 / 3 cols by viewport (portrait → landscape) */}
         <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-5">
           {lang === 'ar' ? 'إجراءات سريعة' : 'Quick actions'}
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
           {QUICK_ACTIONS.map((q) => {
             const Icon = q.icon;
             return (

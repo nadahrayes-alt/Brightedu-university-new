@@ -42,7 +42,7 @@ export function Hours() {
         </li>
       </ul>
 
-      <div className="mt-10 bg-surface border border-border-soft rounded-3xl p-8 max-w-4xl mx-auto">
+      <div className="mt-10 bg-surface border border-border-soft rounded-3xl p-8">
         <div className="flex items-center justify-between text-lg text-ink-muted mb-3">
           <span>{lang === 'ar' ? 'اليوم' : 'Today'}</span>
           <span className="num">

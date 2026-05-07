@@ -11,7 +11,7 @@ export function Queue() {
   const total = 20;
 
   return (
-    <div className="p-12 max-w-5xl mx-auto">
+    <div className="p-12">
       <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => navigate(-1)}

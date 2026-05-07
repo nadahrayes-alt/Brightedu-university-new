@@ -50,7 +50,7 @@ export function Assistant() {
   return (
     <div>
       <PrivacyBanner />
-      <div className="px-6 py-8 sm:px-10 sm:py-12 max-w-5xl mx-auto">
+      <div className="px-6 py-8 sm:px-10 sm:py-12">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <span className="w-16 h-16 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center shrink-0">
@@ -66,10 +66,14 @@ export function Assistant() {
           </div>
         </div>
 
+        {/* In landscape (xl+), the mic stage and Quick Actions sit side-by-side
+          * so the screen reads as one comfortable composition. In portrait the
+          * mic stage spans the full column and the grid sits below it. */}
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 xl:gap-8 mb-10">
         {/* Voice-first stage — the giant mic is the main affordance */}
         <section
           aria-live="polite"
-          className="bg-surface border border-border-soft rounded-3xl p-8 sm:p-12 mb-10 flex flex-col items-center text-center"
+          className="xl:col-span-3 bg-surface border border-border-soft rounded-3xl p-8 sm:p-12 flex flex-col items-center text-center"
         >
           <div className="relative">
             {/* Pulsing halos when listening */}
@@ -124,31 +128,34 @@ export function Assistant() {
           )}
         </section>
 
-        {/* Quick Actions Grid — replaces the small suggestion pills */}
-        <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-5">
-          {lang === 'ar' ? 'إجراءات سريعة' : 'Quick actions'}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {QUICK_ACTIONS.map((q) => {
-            const Icon = q.icon;
-            return (
-              <Link
-                key={q.to + q.ar}
-                to={q.to}
-                className="group bg-surface border border-border-soft rounded-3xl p-5 sm:p-6 min-h-[112px] flex items-center gap-4 hover:border-primary/40 active:scale-[0.99] transition"
-              >
-                <span
-                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border flex items-center justify-center shrink-0 ${COLOR_CLASSES[q.color]}`}
+        {/* Quick Actions — 2 cols in portrait, single tall column in landscape */}
+        <aside className="xl:col-span-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">
+            {lang === 'ar' ? 'إجراءات سريعة' : 'Quick actions'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
+            {QUICK_ACTIONS.map((q) => {
+              const Icon = q.icon;
+              return (
+                <Link
+                  key={q.to + q.ar}
+                  to={q.to}
+                  className="group bg-surface border border-border-soft rounded-3xl p-5 sm:p-6 min-h-[96px] flex items-center gap-4 hover:border-primary/40 active:scale-[0.99] transition"
                 >
-                  <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
-                </span>
-                <span className="flex-1 min-w-0 text-lg sm:text-xl font-bold text-ink leading-tight">
-                  {lang === 'ar' ? q.ar : q.en}
-                </span>
-                <Arrow className="w-5 h-5 text-ink-muted group-hover:text-primary shrink-0" />
-              </Link>
-            );
-          })}
+                  <span
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border flex items-center justify-center shrink-0 ${COLOR_CLASSES[q.color]}`}
+                  >
+                    <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
+                  </span>
+                  <span className="flex-1 min-w-0 text-lg sm:text-xl font-bold text-ink leading-tight">
+                    {lang === 'ar' ? q.ar : q.en}
+                  </span>
+                  <Arrow className="w-5 h-5 text-ink-muted group-hover:text-primary shrink-0" />
+                </Link>
+              );
+            })}
+          </div>
+        </aside>
         </div>
 
         <div className="mt-8 flex">

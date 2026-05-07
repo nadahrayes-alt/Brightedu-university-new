@@ -82,7 +82,7 @@ export function CafeteriaOffers() {
   return (
     <div>
       <PrivacyBanner />
-      <div className="p-12 max-w-7xl mx-auto">
+      <div className="p-12">
         {/* Header */}
         <div className="flex items-center gap-4 mb-3 flex-wrap">
           <button

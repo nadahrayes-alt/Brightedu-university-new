@@ -907,7 +907,7 @@ export function StartRequest() {
   return (
     <div>
       <PrivacyBanner />
-      <div className="p-12 max-w-5xl mx-auto">
+      <div className="p-12">
         <div className="flex items-center gap-4 mb-3 flex-wrap">
           <button
             onClick={() => navigate(-1)}

@@ -44,7 +44,7 @@ export function ServicesDirectory() {
   };
 
   return (
-    <div className="p-12 max-w-7xl mx-auto space-y-6">
+    <div className="p-12 space-y-6">
       {/* Title row + public-safe badge */}
       <div className="flex items-end justify-between gap-5 flex-wrap">
         <div>

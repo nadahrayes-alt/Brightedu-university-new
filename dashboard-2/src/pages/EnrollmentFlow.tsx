@@ -198,7 +198,7 @@ export function EnrollmentFlow() {
   return (
     <div>
       <PrivacyBanner />
-      <div className="p-12 max-w-5xl mx-auto">
+      <div className="p-12">
         <Header />
         <Stepper />
 
