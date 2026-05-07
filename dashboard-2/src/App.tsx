@@ -22,6 +22,7 @@ import { QRExpired } from './pages/QRExpired';
 import { Refusal } from './pages/Refusal';
 import { RoomAvailability } from './pages/RoomAvailability';
 import { TodaysEvents } from './pages/TodaysEvents';
+import { ClubDirectory } from './pages/ClubDirectory';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -102,6 +103,9 @@ export default function App() {
 
           {/* Public-safe today's events list (Scenario #053 — Event FAQ Bot). */}
           <Route path="/events/today" element={<TodaysEvents />} />
+
+          {/* Public-safe student-club directory (Scenario #047 — parallel to "Join a club"). */}
+          <Route path="/clubs/directory" element={<ClubDirectory />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />

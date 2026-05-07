@@ -229,6 +229,7 @@ export function ServiceDetail() {
                   a.id === 'graduation-certificate' ? '/request/graduation'
                   : a.id === 'enrollment-letter' ? '/request/enrollment'
                   : a.id === 'todays-events' ? '/events/today'
+                  : a.id === 'join-a-club' ? '/clubs/directory'
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;

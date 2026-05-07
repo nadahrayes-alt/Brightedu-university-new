@@ -267,6 +267,47 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
     secondaryRoute: '/rooms/availability',
   },
 
+  // Scenario #047 — Club Membership Request. Yellow-tier: AI prepares the
+  // request, club coordinator reviews and approves. Public board exposes a
+  // green-tier club directory; this screen explains the private path.
+  'join-a-club': {
+    titleAr: 'طلب انضمام لنادي طلابي',
+    titleEn: 'Student club membership request',
+    introAr:
+      'لإرسال طلب الانضمام، تحتاج إلى التحقق من رقمك الجامعي ثم إكمال الطلب من جوالك. سيتم توجيه الطلب لمسؤول النادي للمراجعة.',
+    introEn:
+      'To submit a membership request, verify your University ID and complete the request on your phone. The request is then routed to the club coordinator for review.',
+    stepsAr: [
+      'اختيار النادي',
+      'تعبئة سبب الانضمام',
+      'إرسال الطلب لمسؤول النادي',
+      'إشعارك عند مراجعة الطلب',
+    ],
+    stepsEn: [
+      'Pick the club',
+      'Write your reason for joining',
+      'Submit the request to the club coordinator',
+      'Notify you once the request is reviewed',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن يتم عرض أي بيانات شخصية على هذه الشاشة، ولن تتم الموافقة على الطلب تلقائيًا — مسؤول النادي يراجع الطلب.',
+    noticeEn:
+      'No personal data is shown on this screen and the request is not approved automatically — the club coordinator reviews it.',
+    badgeAr: 'يحتاج مراجعة المسؤول',
+    badgeEn: 'Needs coordinator review',
+    badgeSupportAr:
+      'الذكاء الاصطناعي يجهّز الطلب ويوجّهه للنادي. القرار يتخذه مسؤول النادي بعد مراجعة الطلب.',
+    badgeSupportEn:
+      'The AI assistant prepares and routes the request; the club coordinator decides after review.',
+    ctaAr: 'بدء طلب الانضمام',
+    ctaEn: 'Start membership request',
+    secondaryCtaAr: 'استعراض الأندية',
+    secondaryCtaEn: 'Browse clubs',
+    secondaryRoute: '/clubs/directory',
+  },
+
   // Scenario #046 — Event Registration Assistant. Yellow-tier: registration
   // ties an event seat to a specific student, so the public board only
   // initiates the private flow. Selection + confirmation happen on the phone.
