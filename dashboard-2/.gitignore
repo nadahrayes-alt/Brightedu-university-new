@@ -1,0 +1,5 @@
+# OS / editor only — everything else is uploaded by request.
+.DS_Store
+.vscode/
+.idea/
+*.swp

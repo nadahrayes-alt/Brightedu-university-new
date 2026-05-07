@@ -1,0 +1,8 @@
+# OS / editor only
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Claude harness session state (not source)
+.claude/
