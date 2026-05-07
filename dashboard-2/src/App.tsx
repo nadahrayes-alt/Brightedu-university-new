@@ -34,6 +34,7 @@ import { CafeteriaOffers } from './pages/CafeteriaOffers';
 import { LibraryCatalog } from './pages/LibraryCatalog';
 import { StudyRoomAvailability } from './pages/StudyRoomAvailability';
 import { AdmissionInquiry } from './pages/AdmissionInquiry';
+import { StudentAffairsInfo } from './pages/StudentAffairsInfo';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -150,6 +151,9 @@ export default function App() {
 
           {/* Admissions — public general admissions inquiry (Scenarios #063 + #058). */}
           <Route path="/admissions/inquiry" element={<AdmissionInquiry />} />
+
+          {/* Student Affairs — public general guidance (Scenario #009). */}
+          <Route path="/student-affairs/info" element={<StudentAffairsInfo />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />

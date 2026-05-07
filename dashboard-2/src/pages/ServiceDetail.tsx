@@ -129,9 +129,13 @@ export function ServiceDetail() {
             ? (lang === 'ar'
               ? 'هذه الصفحة تعرض موقع نقطة الاستلام وساعات العمل والازدحام التقديري فقط، ولا تعرض بيانات شخصية.'
               : 'This page only shows the pickup point location, working hours, and estimated congestion — no personal data is shown.')
-            : (lang === 'ar'
-              ? 'هذه الصفحة تعرض موقع الخدمة وساعات العمل والازدحام التقديري فقط، ولا تتطلب الرقم الجامعي.'
-              : 'This page only shows location, working hours, and estimated congestion — no University ID is required.')}
+            : service.id === 'student-affairs'
+              ? (lang === 'ar'
+                ? 'هذه الصفحة تعرض موقع شؤون الطلبة وساعات العمل والازدحام التقديري فقط، ولا تتطلب الرقم الجامعي.'
+                : 'This page only shows the Student Affairs location, working hours, and estimated congestion — no University ID is required.')
+              : (lang === 'ar'
+                ? 'هذه الصفحة تعرض موقع الخدمة وساعات العمل والازدحام التقديري فقط، ولا تتطلب الرقم الجامعي.'
+                : 'This page only shows location, working hours, and estimated congestion — no University ID is required.')}
         </p>
       </div>
 
@@ -219,8 +223,13 @@ export function ServiceDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {service.available.map((a) => {
                 const isHumanDecision = HUMAN_DECISION_ACTIONS.has(a.id);
+                // For graduation-certificate, the user-facing badge is
+                // "Needs staff approval" — render as a yellow needs-qr tone
+                // even though the data tier is black; the request itself is
+                // routed through the existing GraduationFlow.
                 const tierTone =
                   isHumanDecision ? 'unavailable'
+                  : a.id === 'graduation-certificate' ? 'needs-qr'
                   : a.tier === 'green' ? 'public-safe'
                   : a.tier === 'yellow' ? 'needs-qr'
                   : 'black-tier';
@@ -237,13 +246,27 @@ export function ServiceDetail() {
                 const isSecureVerify =
                   (service.id === 'document-pickup' && a.tier === 'yellow') ||
                   SECURE_VERIFY_ACTIONS.has(a.id);
+                // Actions where staff approval is the controlling step
+                // (record updates, graduation certificate issuance) read
+                // as "Needs staff approval" rather than the generic yellow.
+                const STAFF_APPROVAL_ACTIONS = new Set([
+                  'update-info',
+                  'graduation-certificate',
+                ]);
+                const isStaffApproval = STAFF_APPROVAL_ACTIONS.has(a.id);
+                // Enrollment-letter is fully automated after ID verification.
+                const isFullAuto = a.id === 'enrollment-letter';
                 const tierLabel =
                   lang === 'ar'
                     ? isHumanDecision ? 'قرار بشري مطلوب'
+                    : isFullAuto ? 'أتمتة كاملة بعد التحقق'
+                    : isStaffApproval ? 'يحتاج اعتماد الموظف'
                     : a.tier === 'green' ? 'عام وآمن'
                     : a.tier === 'yellow' ? (isSecureVerify ? 'يحتاج تحقق آمن' : 'يحتاج جوال')
                     : (isSecureVerify ? 'يحتاج تحقق آمن' : 'خاص — جوال')
                     : isHumanDecision ? 'Human decision required'
+                    : isFullAuto ? 'Full automation after verification'
+                    : isStaffApproval ? 'Needs staff approval'
                     : a.tier === 'green' ? 'Public-safe'
                     : a.tier === 'yellow' ? (isSecureVerify ? 'Secure verification required' : 'Phone needed')
                     : (isSecureVerify ? 'Secure verification required' : 'Phone only');
@@ -266,6 +289,7 @@ export function ServiceDetail() {
                   : a.id === 'my-borrowed-books' ? `/start-request/${service.id}?action=${a.id}`
                   : a.id === 'admission-inquiry' ? '/admissions/inquiry'
                   : a.id === 'my-admission-status' ? `/start-request/${service.id}?action=${a.id}`
+                  : (a.id === 'general-inquiry' && service.id === 'student-affairs') ? '/student-affairs/info'
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;
