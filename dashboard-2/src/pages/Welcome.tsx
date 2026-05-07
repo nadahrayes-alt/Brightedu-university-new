@@ -103,54 +103,22 @@ export function Welcome() {
       </div>
 
       <div className="relative px-6 py-8 sm:px-10 sm:py-12">
-        {/* Hero — mascot greeting the user with a speech bubble.
-          * Portrait: mascot above bubble. Landscape: side-by-side. */}
-        <section className="mb-10 grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 lg:gap-12 items-center">
-          {/* Mascot column — friendly greeter with halo + sparkles + float */}
-          <div className="relative shrink-0 mx-auto lg:mx-0">
-            {/* Soft pulsing halo behind */}
-            <div className="pointer-events-none absolute inset-0 -m-8 rounded-full bg-primary/25 dark:bg-primary/35 blur-3xl animate-glow-soft" />
-            <div className="pointer-events-none absolute inset-0 -m-2 rounded-full bg-privacy/20 dark:bg-privacy/25 blur-2xl animate-glow-soft" style={{ animationDelay: '1.2s' }} />
-
-            {/* Twinkling sparkles around the mascot */}
-            <Sparkles className="pointer-events-none absolute -top-2 -end-4 w-6 h-6 text-primary animate-sparkle-twinkle" />
-            <Sparkles className="pointer-events-none absolute top-10 -start-6 w-5 h-5 text-privacy animate-sparkle-twinkle" style={{ animationDelay: '0.6s' }} />
-            <Sparkles className="pointer-events-none absolute bottom-12 -end-7 w-4 h-4 text-teal animate-sparkle-twinkle" style={{ animationDelay: '1.1s' }} />
-
-            <img
-              src="/mascot.png"
-              alt={lang === 'ar' ? 'مساعد الحرم الذكي' : 'Smart Campus assistant mascot'}
-              className="relative w-48 sm:w-56 lg:w-72 h-auto select-none animate-mascot-float drop-shadow-[0_24px_36px_rgba(47,91,255,0.3)]"
-              draggable={false}
-            />
-
-            {/* Soft "ground" shadow ellipse beneath the mascot */}
-            <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 w-32 h-3 rounded-full bg-black/20 dark:bg-black/40 blur-md" />
-          </div>
-
-          {/* Speech bubble + supporting copy */}
-          <div className="order-last lg:order-none">
-            {/* Speech bubble greeting — rounded with a tail toward the mascot */}
-            <div className="relative bg-surface border border-primary/30 dark:border-primary/40 rounded-3xl rounded-tl-md lg:rounded-tl-md lg:rounded-tr-3xl p-6 sm:p-7 shadow-[0_12px_40px_-12px_rgba(47,91,255,0.35)] inline-block">
-              {/* Speech bubble tail (pointing back to mascot) */}
-              <span
-                aria-hidden="true"
-                className="hidden lg:block absolute top-8 -start-3 w-6 h-6 rotate-45 bg-surface border-s border-b border-primary/30 dark:border-primary/40 ltr:left-auto ltr:-right-3 ltr:rotate-[135deg] ltr:border-s-0 ltr:border-b-0 ltr:border-e ltr:border-t"
-              />
-
-              <div className="inline-flex items-center gap-2 text-primary text-sm font-bold tracking-wide uppercase mb-3">
-                <Sparkles className="w-4 h-4" />
-                {lang === 'ar' ? 'مرحبًا!' : 'Hi there!'}
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-ink leading-[1.05]">
-                {lang === 'ar' ? 'كيف أقدر أساعدك؟' : 'How can I help?'}
-              </h1>
-              <p className="mt-3 text-xl sm:text-2xl text-ink-muted leading-snug">
-                {lang === 'ar'
-                  ? 'اضغط على المساعد للسؤال بالصوت، أو اختر إجراءً سريعًا.'
-                  : 'Tap the assistant to ask by voice, or pick a quick action below.'}
-              </p>
+        {/* Hero — friendly avatar + greeting */}
+        <section className="mb-8 flex items-center gap-4 sm:gap-5 flex-wrap">
+          <MascotAvatar size="md" />
+          <div className="min-w-0 flex-1">
+            <div className="inline-flex items-center gap-2 px-3 h-8 rounded-full bg-primary/10 dark:bg-primary/15 text-primary text-xs font-bold tracking-wider uppercase mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              {lang === 'ar' ? 'مرحبًا!' : 'Hi there!'}
             </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-ink leading-[1.05]">
+              {lang === 'ar' ? 'كيف أقدر أساعدك؟' : 'How can I help?'}
+            </h1>
+            <p className="mt-3 text-xl sm:text-2xl text-ink-muted leading-snug max-w-2xl">
+              {lang === 'ar'
+                ? 'اضغط على المساعد للسؤال بالصوت، أو اختر إجراءً سريعًا.'
+                : 'Tap the assistant to ask by voice, or pick a quick action below.'}
+            </p>
           </div>
         </section>
 
@@ -182,15 +150,13 @@ export function Welcome() {
           />
         </section>
 
-        {/* Big Voice CTA — promotes the assistant as the primary entry point */}
+        {/* Big Voice CTA — the mascot avatar promotes the assistant identity */}
         <button
           onClick={() => navigate('/assistant')}
-          className="group w-full mb-10 rounded-3xl border-2 border-primary/40 bg-gradient-to-r from-primary/15 via-surface to-privacy/15 dark:from-primary/25 dark:via-surface dark:to-privacy/25 p-7 sm:p-8 flex items-center gap-5 hover:border-primary/60 active:scale-[0.99] transition shadow-[0_8px_40px_-12px_rgba(47,91,255,0.4)]"
+          className="group w-full mb-10 rounded-3xl border-2 border-primary/40 bg-gradient-to-r from-primary/15 via-surface to-privacy/15 dark:from-primary/25 dark:via-surface dark:to-privacy/25 p-5 sm:p-6 flex items-center gap-5 hover:border-primary/60 active:scale-[0.99] transition shadow-[0_8px_40px_-12px_rgba(47,91,255,0.4)]"
           aria-label={lang === 'ar' ? 'فتح المساعد الصوتي' : 'Open the voice assistant'}
         >
-          <span className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/40 shrink-0">
-            <Sparkles className="w-10 h-10 sm:w-12 sm:h-12" />
-          </span>
+          <MascotAvatar size="lg" />
           <div className="flex-1 min-w-0 text-start">
             <div className="text-2xl sm:text-3xl font-bold text-ink leading-tight mb-1">
               {lang === 'ar' ? 'اسأل مساعد الحرم' : 'Ask the campus assistant'}
@@ -297,6 +263,53 @@ const TONES: Record<string, { ring: string; bg: string; text: string }> = {
   success: { ring: 'border-success/30',  bg: 'bg-success/15 dark:bg-success/20',   text: 'text-success' },
   warning: { ring: 'border-warning/30',  bg: 'bg-warning/15 dark:bg-warning/20',   text: 'text-warning' },
 };
+
+/**
+ * The campus mascot rendered as a friendly avatar — circular, with a soft
+ * primary halo, a subtle gentle bob (mascot-float), and a live "online" dot
+ * to make the kiosk feel personable.
+ *
+ * The source illustration is a full-body portrait, so we use a wide
+ * background-image cropped to show only the head/upper-body inside the circle.
+ */
+const AVATAR_SIZES = {
+  sm: 'w-16 h-16',
+  md: 'w-24 h-24 sm:w-28 sm:h-28',
+  lg: 'w-20 h-20 sm:w-24 sm:h-24',
+} as const;
+
+const AVATAR_DOT = {
+  sm: 'w-3.5 h-3.5',
+  md: 'w-5 h-5',
+  lg: 'w-4 h-4',
+} as const;
+
+function MascotAvatar({ size = 'md' }: { size?: keyof typeof AVATAR_SIZES }) {
+  return (
+    <div className="relative shrink-0">
+      {/* Soft halo behind avatar */}
+      <div className="pointer-events-none absolute inset-0 -m-2 rounded-full bg-primary/30 dark:bg-primary/40 blur-xl animate-glow-soft" />
+
+      {/* Avatar disc — head/upper-body crop of the mascot */}
+      <div
+        className={`relative ${AVATAR_SIZES[size]} rounded-full bg-gradient-to-br from-primary/20 to-privacy/20 dark:from-primary/30 dark:to-privacy/30 ring-4 ring-surface dark:ring-surface shadow-[0_12px_30px_-8px_rgba(47,91,255,0.45)] animate-mascot-float`}
+        style={{
+          backgroundImage: 'url(/mascot.png)',
+          backgroundSize: '180% auto',
+          backgroundPosition: 'center top',
+          backgroundRepeat: 'no-repeat',
+        }}
+        role="img"
+        aria-label="Campus assistant mascot"
+      />
+
+      {/* Live "online" indicator */}
+      <span className={`absolute bottom-0 end-0 ${AVATAR_DOT[size]} rounded-full bg-success ring-4 ring-surface dark:ring-surface`}>
+        <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-75" />
+      </span>
+    </div>
+  );
+}
 
 function KpiCard({
   tone, icon, label, value,
