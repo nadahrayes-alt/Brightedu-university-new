@@ -13,7 +13,8 @@
   --ink-subtle:  148 163 184;
 }
 
-html.dark {
+html.dark,
+.dark {
   --canvas:      10  14  23;
   --surface:     15  21  36;
   --surface-2:   22  29  46;

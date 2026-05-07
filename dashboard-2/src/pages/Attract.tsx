@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  ShieldCheck, TrendingUp, Clock, Activity,
-  Sparkles, ChevronUp,
-} from 'lucide-react';
+import { ShieldCheck, TrendingUp, Clock, ChevronRight } from 'lucide-react';
 import { useApp } from '../lib/AppContext';
 import { mockBackend } from '../data/mock';
-import { SERVICES } from '../data/services';
 import { ar } from '../lib/numerals';
 
 function useNow() {
@@ -22,14 +18,12 @@ export function Attract() {
   const navigate = useNavigate();
   const { lang } = useApp();
   const pulse = mockBackend.getCampusPulse();
-  const openCount = SERVICES.filter((s) => s.status === 'open').length;
   const now = useNow();
 
   const start = () => navigate('/home');
 
   const locale = lang === 'ar' ? 'ar-SA' : 'en-US';
   const time = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
-  const date = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
     <div
@@ -40,45 +34,44 @@ export function Attract() {
         if (e.key === 'Enter' || e.key === ' ') start();
       }}
       aria-label={lang === 'ar' ? 'المس الشاشة للبدء' : 'Touch to start'}
-      className="relative w-screen h-screen overflow-hidden bg-canvas bg-campus-pattern cursor-pointer focus:outline-none animate-fade-in"
+      className="dark relative w-screen h-screen overflow-hidden bg-canvas cursor-pointer focus:outline-none animate-fade-in"
     >
-      {/* Cinematic ambient video background (slow Ken Burns drift) */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
+      {/* Subtle ambient atmosphere — corners only */}
+      <div className="pointer-events-none absolute -top-72 -start-52 w-[40rem] h-[40rem] rounded-full bg-primary/12 dark:bg-primary/15 blur-[160px]" />
+      <div className="pointer-events-none absolute -bottom-72 -end-44 w-[44rem] h-[44rem] rounded-full bg-privacy/10 dark:bg-privacy/12 blur-[160px]" />
+
+      {/* Eclipse — bright crescent rim formed by a halo + dark disc */}
+      <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-50 dark:opacity-35 dark:mix-blend-screen animate-ken-burns"
-      >
-        <source src="/videos/83e6f4689c1025201ce25e0a3225f72.mp4" type="video/mp4" />
-      </video>
-
-      {/* Readability scrim over the video (vertical + radial vignette) */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-canvas/55 via-canvas/40 to-canvas/85 dark:from-canvas/70 dark:via-canvas/55 dark:to-canvas/90" />
-      <div
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute"
         style={{
-          background:
-            'radial-gradient(ellipse at center, transparent 0%, transparent 35%, rgba(0,0,0,0.18) 100%)',
+          left: '50%',
+          top: '52%',
+          transform: 'translate(-50%, -50%)',
+          width: '1500px',
+          height: '1500px',
         }}
-      />
+      >
+        {/* Bright halo glow */}
+        <div
+          className="absolute inset-0 rounded-full animate-glow-soft"
+          style={{
+            background:
+              'radial-gradient(circle at center, rgba(80,115,255,0.95) 0%, rgba(125,100,255,0.65) 28%, rgba(60,90,220,0.3) 50%, transparent 65%)',
+            filter: 'blur(40px)',
+          }}
+        />
+        {/* Dark planet disc — shifted down to widen the TOP crescent rim */}
+        <div
+          className="absolute rounded-full bg-canvas"
+          style={{
+            inset: '4%',
+            transform: 'translateY(40px)',
+          }}
+        />
+      </div>
 
-      {/* Ambient gradient blobs (theme-aware, slow drift) */}
-      <div
-        className="pointer-events-none absolute -top-56 -start-44 w-[48rem] h-[48rem] rounded-full bg-primary/20 dark:bg-primary/30 blur-[140px] animate-glow-soft"
-      />
-      <div
-        className="pointer-events-none absolute -bottom-64 -end-40 w-[52rem] h-[52rem] rounded-full bg-privacy/15 dark:bg-privacy/25 blur-[160px] animate-glow-soft"
-        style={{ animationDelay: '2.5s' }}
-      />
-      <div
-        className="pointer-events-none absolute top-1/4 end-1/4 w-[28rem] h-[28rem] rounded-full bg-teal/10 dark:bg-teal/20 blur-[120px] animate-glow-soft"
-        style={{ animationDelay: '4s' }}
-      />
-
-      {/* Top frame: brand + clock */}
+      {/* Top frame: brand + clock pill (mirrors reference's top-right CTA pill) */}
       <header className="relative z-20 flex items-start justify-between px-12 pt-10">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary-700 text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-primary/30">
@@ -91,122 +84,112 @@ export function Attract() {
             </div>
           </div>
         </div>
-        <div className="text-end">
-          <div className="text-3xl font-bold text-ink num leading-none">{time}</div>
-          <div className="text-sm text-ink-muted mt-1">{date}</div>
+        <div className="inline-flex items-center gap-2 h-10 px-4 rounded-full border border-border-soft bg-surface/60 dark:bg-surface/30 backdrop-blur-md">
+          <Clock className="w-4 h-4 text-ink-muted" />
+          <span className="text-sm font-bold text-ink num">{time}</span>
         </div>
       </header>
 
-      {/* Center stack */}
-      <main className="relative z-10 h-[calc(100%-10rem)] flex flex-col items-center justify-center px-12 -mt-6">
-        {/* Animated medallion */}
-        <div className="relative mb-12">
-          {/* outer halo (pulsing) */}
-          <div className="absolute inset-0 -m-20 rounded-full bg-primary/25 dark:bg-primary/40 blur-3xl animate-glow-soft" />
-
-          {/* slow rotating dashed ring */}
-          <div className="absolute inset-0 -m-10 rounded-full border-2 border-dashed border-primary/30 dark:border-primary/50 animate-spin-slow" />
-
-          {/* slower counter-rotating thinner ring */}
-          <div className="absolute inset-0 -m-4 rounded-full border border-privacy/30 dark:border-privacy/50 animate-spin-slow-reverse" />
-
-          {/* core glass orb */}
-          <div className="relative w-64 h-64 rounded-full border-2 border-primary/50 dark:border-primary/60 bg-gradient-to-br from-primary/45 via-primary/20 to-privacy/30 flex items-center justify-center shadow-[0_0_140px_rgba(47,91,255,0.55)] dark:shadow-[0_0_160px_rgba(47,91,255,0.65)]">
-            {/* inner frosted disc */}
-            <div className="absolute inset-3 rounded-full bg-gradient-to-tr from-surface/50 via-surface/25 to-transparent backdrop-blur-md border border-primary/20 dark:border-white/10" />
-            <CampusMark className="relative w-40 h-40 text-primary dark:text-white drop-shadow-[0_6px_24px_rgba(47,91,255,0.65)]" />
-          </div>
-
-          {/* orbiting accent dots (counter-rotation for visual life) */}
-          <div className="absolute inset-0 -m-14 animate-spin-slow-reverse">
-            <span className="absolute top-0 start-1/2 -ms-2 w-4 h-4 rounded-full bg-primary shadow-[0_0_18px_rgba(47,91,255,0.7)]" />
-            <span className="absolute bottom-0 start-1/2 -ms-1.5 w-3 h-3 rounded-full bg-privacy shadow-[0_0_14px_rgba(109,93,246,0.7)]" />
-            <span className="absolute top-1/2 start-0 -mt-1.5 w-3 h-3 rounded-full bg-teal shadow-[0_0_14px_rgba(0,124,138,0.7)]" />
-            <span className="absolute top-1/2 end-0 -mt-1 w-2 h-2 rounded-full bg-warning shadow-[0_0_12px_rgba(245,158,11,0.7)]" />
-          </div>
-        </div>
-
-        {/* Eyebrow with side decorative lines */}
-        <div className="flex items-center gap-5 mb-7">
-          <span className="hidden md:block w-20 h-px bg-gradient-to-r from-transparent to-primary/50" />
-          <div className="inline-flex items-center gap-2 px-5 h-10 rounded-full bg-primary/10 dark:bg-primary/15 border border-primary/30 text-primary text-sm font-bold tracking-[0.28em] uppercase">
-            <Sparkles className="w-4 h-4" />
-            {lang === 'ar' ? 'جامعة الملك عبدالعزيز' : 'King Abdulaziz University'}
-          </div>
-          <span className="hidden md:block w-20 h-px bg-gradient-to-l from-transparent to-primary/50" />
-        </div>
-
-        {/* Headline with vertical gradient (works in both directions) */}
+      {/* Center: clean headline + subtitle (no badges, no CTA) */}
+      <main className="relative z-10 h-[calc(100%-23rem)] flex flex-col items-center justify-center px-12">
         <h1
-          className={`text-center max-w-[20ch] font-bold leading-[1.04] bg-gradient-to-b from-ink via-primary to-privacy bg-clip-text text-transparent animate-gradient-shift ${
-            lang === 'ar' ? 'text-[88px]' : 'text-[78px]'
+          className={`text-center max-w-[18ch] font-bold leading-[1.05] text-ink ${
+            lang === 'ar' ? 'text-[80px]' : 'text-[72px]'
           }`}
-          style={{ backgroundSize: '200% 200%' }}
         >
           {lang === 'ar' ? 'مرحبًا بك في حرمنا الذكي' : 'Welcome to our Smart Campus'}
         </h1>
-
-        {/* Subtitle */}
-        <p className="mt-6 text-2xl text-ink-muted">
-          {lang === 'ar' ? 'الحرم الجامعي الرقمي — مبنى ٤' : 'Digital Campus — Building 4'}
+        <p className="mt-6 max-w-[44ch] text-center text-lg text-ink-muted leading-relaxed">
+          {lang === 'ar'
+            ? 'الحرم الجامعي الرقمي ـــ مبنى ٤. خصوصية محمية وخدمات حيّة في الوقت الفعلي.'
+            : 'Digital campus, building 4 — privacy-first design with live services in real time.'}
         </p>
 
-        {/* CTA pill + bouncing chevron */}
-        <div className="mt-14 flex flex-col items-center gap-6">
-          <div className="inline-flex items-center gap-5 h-20 px-12 rounded-full border-2 border-primary/40 dark:border-primary/50 bg-gradient-to-r from-primary/15 via-surface/70 to-privacy/15 dark:from-primary/25 dark:via-surface/40 dark:to-privacy/25 backdrop-blur-md shadow-2xl shadow-primary/20 dark:shadow-primary/30">
-            <span className="relative flex w-4 h-4">
-              <span className="absolute inset-0 rounded-full bg-primary opacity-75 animate-ping" />
-              <span className="relative w-4 h-4 rounded-full bg-primary shadow-[0_0_12px_rgba(47,91,255,0.8)]" />
-            </span>
-            <span className="text-2xl text-ink font-bold">
-              {lang === 'ar' ? 'المس الشاشة للبدء' : 'Touch the screen to start'}
-            </span>
-            <span className="text-ink-subtle text-2xl">·</span>
-            <span className="text-xl text-ink-muted font-medium">
-              {lang === 'ar' ? 'Touch to Start' : 'المس للبدء'}
-            </span>
-          </div>
+        {/* Animated CTA — pulsing halo + traveling sheen + live dot + bouncing chevron */}
+        <div className="relative mt-12">
+          {/* Pulsing halo behind button */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -m-10 rounded-full bg-primary/40 blur-2xl animate-glow-soft"
+          />
+          {/* Secondary slower halo for depth */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-privacy/35 blur-2xl animate-glow-soft"
+            style={{ animationDelay: '1.5s' }}
+          />
 
-          <div className="flex flex-col items-center text-primary/70 animate-arrow-float">
-            <ChevronUp className="w-7 h-7 rotate-180" strokeWidth={2.5} />
-            <ChevronUp className="w-7 h-7 rotate-180 -mt-3.5 opacity-50" strokeWidth={2.5} />
-          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              start();
+            }}
+            className="relative inline-flex items-center gap-4 h-16 ps-7 pe-9 rounded-full border-2 border-primary/55 bg-gradient-to-r from-primary/30 via-surface/30 to-privacy/30 backdrop-blur-md shadow-[0_0_60px_-10px_rgba(47,91,255,0.75)] overflow-hidden transition-all hover:scale-[1.03] active:scale-[0.97] hover:border-primary/80 hover:shadow-[0_0_80px_-6px_rgba(47,91,255,0.95)]"
+          >
+            {/* Traveling sheen */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 -left-1/4 w-1/4 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-sheen-slide"
+            />
+
+            {/* Live pulsing dot */}
+            <span className="relative flex w-3 h-3 shrink-0">
+              <span className="absolute inset-0 rounded-full bg-primary opacity-75 animate-ping" />
+              <span className="relative w-3 h-3 rounded-full bg-primary shadow-[0_0_12px_rgba(47,91,255,0.95)]" />
+            </span>
+
+            <span className="relative text-lg font-bold text-ink tracking-wide whitespace-nowrap">
+              {lang === 'ar' ? 'ابدأ من هنا' : 'Start from here'}
+            </span>
+
+            {/* Bouncing chevron — flips for RTL via wrapper scaleX */}
+            <span className="relative flex items-center rtl:-scale-x-100">
+              <ChevronRight className="w-5 h-5 text-primary animate-arrow-nudge drop-shadow-[0_0_8px_rgba(47,91,255,0.9)]" strokeWidth={2.5} />
+            </span>
+          </button>
         </div>
       </main>
 
-      {/* Bottom KPI strip */}
-      <footer className="absolute bottom-0 inset-x-0 z-10 border-t border-border-soft bg-surface/70 dark:bg-surface/40 backdrop-blur-md">
-        <div className="grid grid-cols-4 divide-x divide-border-soft rtl:divide-x-reverse">
-          <Stat
+      {/* Bottom 3 feature cards — centered, glassmorphic, with soft edge glow */}
+      <footer className="absolute bottom-10 inset-x-0 z-10 px-12 animate-fade-in">
+        <div className="mx-auto max-w-[1280px] grid grid-cols-3 gap-6">
+          <FeatureCard
             tone="privacy"
-            icon={<ShieldCheck className="w-6 h-6" />}
-            label={lang === 'ar' ? 'الخصوصية' : 'Privacy'}
-            value={lang === 'ar' ? 'محمية' : 'Protected'}
-          />
-          <Stat
-            tone="success"
-            icon={<TrendingUp className="w-6 h-6" />}
-            label={lang === 'ar' ? 'الزيارات اليوم' : 'Visits today'}
-            value={lang === 'ar' ? ar(pulse.visitsToday) : String(pulse.visitsToday)}
-          />
-          <Stat
-            tone="warning"
-            icon={<Clock className="w-6 h-6" />}
-            label={lang === 'ar' ? 'متوسط الانتظار' : 'Average wait'}
-            value={
+            icon={<ShieldCheck className="w-7 h-7" />}
+            title={lang === 'ar' ? 'الخصوصية أولاً' : 'Privacy First'}
+            description={
               lang === 'ar'
-                ? `${ar(pulse.averageWaitMin)} دقيقة`
-                : `${pulse.averageWaitMin} min`
+                ? 'البيانات مشفّرة وتُعالج على الجهاز كلما أمكن. زيارتك تبقى خاصة بك.'
+                : 'All data is encrypted and processed on-device when possible. Your visit stays yours.'
             }
           />
-          <Stat
-            tone="primary"
-            icon={<Activity className="w-6 h-6" />}
-            label={lang === 'ar' ? 'الخدمات المفتوحة' : 'Open services'}
-            value={
+          <FeatureCard
+            tone="success"
+            icon={<TrendingUp className="w-7 h-7" />}
+            title={
               lang === 'ar'
-                ? `${ar(openCount)} / ${ar(SERVICES.length)}`
-                : `${openCount} / ${SERVICES.length}`
+                ? `${ar(pulse.visitsToday)} زيارة اليوم`
+                : `${pulse.visitsToday} Visits Today`
+            }
+            description={
+              lang === 'ar'
+                ? 'حركة زوار حيّة عبر الحرم الذكي بتحديث مستمر.'
+                : 'Live foot-traffic across the smart campus, updated in real time.'
+            }
+          />
+          <FeatureCard
+            tone="warning"
+            icon={<Clock className="w-7 h-7" />}
+            title={
+              lang === 'ar'
+                ? `${ar(pulse.averageWaitMin)} دقيقة انتظار`
+                : `${pulse.averageWaitMin} min Average Wait`
+            }
+            description={
+              lang === 'ar'
+                ? 'متوسط الانتظار الحيّ عبر جميع الخدمات المفتوحة الآن.'
+                : 'Live measurement across all currently open services.'
             }
           />
         </div>
@@ -215,137 +198,42 @@ export function Attract() {
   );
 }
 
-/**
- * Custom Smart-Campus mark: a stylized 3-building skyline with an AI
- * sparkle on top and lit windows. Uses currentColor so the glow orb's
- * text-color drives both the strokes and fills.
- */
-function CampusMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 120 120"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.4"
-      strokeLinejoin="round"
-      strokeLinecap="round"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="bldg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"  stopColor="currentColor" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="currentColor" stopOpacity="0.04" />
-        </linearGradient>
-      </defs>
-
-      {/* AI sparkle + halo on top */}
-      <g className="origin-center" style={{ transformOrigin: '60px 18px' }}>
-        <circle cx="60" cy="18" r="9" fill="currentColor" opacity="0.18" className="animate-pulse" />
-        <circle cx="60" cy="18" r="3.4" fill="currentColor" />
-        <path d="M60 6 L60 11 M60 25 L60 30 M48 18 L53 18 M67 18 L72 18" strokeWidth="1.8" />
-      </g>
-
-      {/* Antenna line down to the tower roof */}
-      <line x1="60" y1="30" x2="60" y2="40" strokeWidth="1.6" />
-
-      {/* Center tall tower */}
-      <path
-        d="M48 40 L72 40 L72 102 L48 102 Z"
-        fill="url(#bldg)"
-      />
-
-      {/* Left wing (shorter) */}
-      <path
-        d="M22 60 L48 60 L48 102 L22 102 Z"
-        fill="url(#bldg)"
-        opacity="0.95"
-      />
-
-      {/* Right wing (medium) */}
-      <path
-        d="M72 54 L98 54 L98 102 L72 102 Z"
-        fill="url(#bldg)"
-        opacity="0.95"
-      />
-
-      {/* Lit windows — center tower */}
-      <g fill="currentColor" stroke="none">
-        <rect x="53.5" y="48"  width="3" height="5" rx="0.5" />
-        <rect x="63.5" y="48"  width="3" height="5" rx="0.5" opacity="0.55" />
-        <rect x="53.5" y="60"  width="3" height="5" rx="0.5" opacity="0.55" />
-        <rect x="63.5" y="60"  width="3" height="5" rx="0.5" />
-        <rect x="53.5" y="72"  width="3" height="5" rx="0.5" />
-        <rect x="63.5" y="72"  width="3" height="5" rx="0.5" />
-        <rect x="53.5" y="84"  width="3" height="5" rx="0.5" opacity="0.55" />
-        <rect x="63.5" y="84"  width="3" height="5" rx="0.5" />
-        <rect x="53.5" y="94"  width="3" height="4" rx="0.5" />
-        <rect x="63.5" y="94"  width="3" height="4" rx="0.5" opacity="0.55" />
-      </g>
-
-      {/* Lit windows — left wing */}
-      <g fill="currentColor" stroke="none" opacity="0.85">
-        <rect x="27"   y="68"  width="2.6" height="4" rx="0.4" />
-        <rect x="33.7" y="68"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="40.4" y="68"  width="2.6" height="4" rx="0.4" />
-        <rect x="27"   y="80"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="33.7" y="80"  width="2.6" height="4" rx="0.4" />
-        <rect x="40.4" y="80"  width="2.6" height="4" rx="0.4" />
-        <rect x="27"   y="92"  width="2.6" height="4" rx="0.4" />
-        <rect x="33.7" y="92"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="40.4" y="92"  width="2.6" height="4" rx="0.4" />
-      </g>
-
-      {/* Lit windows — right wing */}
-      <g fill="currentColor" stroke="none" opacity="0.85">
-        <rect x="77"   y="62"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="83.7" y="62"  width="2.6" height="4" rx="0.4" />
-        <rect x="90.4" y="62"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="77"   y="74"  width="2.6" height="4" rx="0.4" />
-        <rect x="83.7" y="74"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="90.4" y="74"  width="2.6" height="4" rx="0.4" />
-        <rect x="77"   y="86"  width="2.6" height="4" rx="0.4" />
-        <rect x="83.7" y="86"  width="2.6" height="4" rx="0.4" />
-        <rect x="90.4" y="86"  width="2.6" height="4" rx="0.4" opacity="0.55" />
-        <rect x="77"   y="96"  width="2.6" height="3" rx="0.4" opacity="0.55" />
-        <rect x="83.7" y="96"  width="2.6" height="3" rx="0.4" />
-        <rect x="90.4" y="96"  width="2.6" height="3" rx="0.4" />
-      </g>
-
-      {/* Ground line */}
-      <line x1="14" y1="102" x2="106" y2="102" strokeWidth="2" opacity="0.45" />
-    </svg>
-  );
-}
-
-const TONE: Record<string, { ring: string; bg: string; text: string }> = {
-  primary: { ring: 'border-primary/30',  bg: 'bg-primary/10 dark:bg-primary/20',   text: 'text-primary' },
-  privacy: { ring: 'border-privacy/30',  bg: 'bg-privacy/10 dark:bg-privacy/20',   text: 'text-privacy' },
-  success: { ring: 'border-success/30',  bg: 'bg-success/15 dark:bg-success/20',   text: 'text-success' },
-  warning: { ring: 'border-warning/30',  bg: 'bg-warning/15 dark:bg-warning/20',   text: 'text-warning' },
+const TONE: Record<string, { ring: string; bg: string; text: string; glow: string }> = {
+  primary: { ring: 'border-primary/30', bg: 'bg-primary/10 dark:bg-primary/20', text: 'text-primary', glow: 'rgba(47,91,255,0.45)' },
+  privacy: { ring: 'border-privacy/30', bg: 'bg-privacy/10 dark:bg-privacy/20', text: 'text-privacy', glow: 'rgba(109,93,246,0.45)' },
+  success: { ring: 'border-success/30', bg: 'bg-success/15 dark:bg-success/20', text: 'text-success', glow: 'rgba(22,163,74,0.4)' },
+  warning: { ring: 'border-warning/30', bg: 'bg-warning/15 dark:bg-warning/20', text: 'text-warning', glow: 'rgba(245,158,11,0.4)' },
 };
 
-function Stat({
-  tone, icon, label, value,
+function FeatureCard({
+  tone, icon, title, description,
 }: {
   tone: keyof typeof TONE;
   icon: React.ReactNode;
-  label: string;
-  value: string;
+  title: string;
+  description: string;
 }) {
   const t = TONE[tone];
   return (
-    <div className="flex items-center gap-4 py-6 px-8">
-      <span
-        className={`shrink-0 w-12 h-12 rounded-2xl border ${t.ring} ${t.bg} ${t.text} flex items-center justify-center`}
-      >
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <div className="text-xs text-ink-subtle uppercase tracking-[0.2em] font-semibold">
-          {label}
-        </div>
-        <div className={`text-2xl font-bold ${t.text} num leading-tight`}>{value}</div>
+    <div className="relative rounded-3xl border border-border-soft/80 bg-surface/40 dark:bg-surface/25 backdrop-blur-xl p-8 overflow-hidden">
+      {/* Top edge glow — light bleeds in from above */}
+      <div
+        className="pointer-events-none absolute inset-x-0 -top-20 h-44 rounded-full blur-3xl opacity-90"
+        style={{ background: `radial-gradient(ellipse at center, ${t.glow}, transparent 70%)` }}
+      />
+      {/* Hairline highlight along the top edge */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent dark:via-white/15" />
+
+      <div className="relative z-10 flex flex-col items-center text-center gap-5">
+        <span
+          className={`shrink-0 w-16 h-16 rounded-full border ${t.ring} ${t.bg} ${t.text} flex items-center justify-center backdrop-blur-md`}
+          style={{ boxShadow: `0 0 32px -8px ${t.glow}` }}
+        >
+          {icon}
+        </span>
+
+        <h3 className="text-xl font-bold text-ink leading-tight">{title}</h3>
+        <p className="text-sm text-ink-muted leading-relaxed max-w-[30ch]">{description}</p>
       </div>
     </div>
   );

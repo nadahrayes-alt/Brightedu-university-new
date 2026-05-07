@@ -92,6 +92,14 @@ export default {
           '50%':  { transform: 'scale(1.08) translate3d(-1.5%, -1%, 0)' },
           '100%': { transform: 'scale(1) translate3d(0, 0, 0)' },
         },
+        sheenSlide: {
+          '0%':         { transform: 'translateX(-120%) skewX(-12deg)' },
+          '60%, 100%':  { transform: 'translateX(420%)  skewX(-12deg)' },
+        },
+        arrowNudge: {
+          '0%, 100%':   { transform: 'translateX(0)',   opacity: '0.75' },
+          '50%':        { transform: 'translateX(5px)', opacity: '1' },
+        },
       },
       animation: {
         'fade-in':           'fadeIn 240ms cubic-bezier(0,0,0,1) both',
@@ -102,6 +110,8 @@ export default {
         'arrow-float':       'arrowFloat 2.4s ease-in-out infinite',
         'gradient-shift':    'gradientShift 14s ease-in-out infinite',
         'ken-burns':         'kenBurns 28s ease-in-out infinite',
+        'sheen-slide':       'sheenSlide 2.8s ease-in-out infinite',
+        'arrow-nudge':       'arrowNudge 1.5s ease-in-out infinite',
       },
     },
   },
