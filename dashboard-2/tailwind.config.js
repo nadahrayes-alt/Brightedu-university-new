@@ -100,6 +100,14 @@ export default {
           '0%, 100%':   { transform: 'translateX(0)',   opacity: '0.75' },
           '50%':        { transform: 'translateX(5px)', opacity: '1' },
         },
+        mascotFloat: {
+          '0%, 100%': { transform: 'translateY(0) rotate(-1deg)' },
+          '50%':      { transform: 'translateY(-14px) rotate(1deg)' },
+        },
+        sparkleTwinkle: {
+          '0%, 100%': { transform: 'scale(0.8)', opacity: '0.4' },
+          '50%':      { transform: 'scale(1.15)', opacity: '1' },
+        },
       },
       animation: {
         'fade-in':           'fadeIn 240ms cubic-bezier(0,0,0,1) both',
@@ -112,6 +120,8 @@ export default {
         'ken-burns':         'kenBurns 28s ease-in-out infinite',
         'sheen-slide':       'sheenSlide 2.8s ease-in-out infinite',
         'arrow-nudge':       'arrowNudge 1.5s ease-in-out infinite',
+        'mascot-float':      'mascotFloat 4s ease-in-out infinite',
+        'sparkle-twinkle':   'sparkleTwinkle 2s ease-in-out infinite',
       },
     },
   },

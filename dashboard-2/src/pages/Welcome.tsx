@@ -103,34 +103,54 @@ export function Welcome() {
       </div>
 
       <div className="relative px-6 py-8 sm:px-10 sm:py-12">
-        {/* Hero — text on one side, mascot on the other (lg+).
-          * On portrait/small screens the mascot floats above the text. */}
-        <section className="mb-8 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 lg:gap-10 items-center">
-          <div className="order-2 lg:order-1">
-            <div className="inline-flex items-center gap-2 px-4 h-10 rounded-full bg-primary/15 text-primary text-base font-semibold mb-5">
-              <Sparkles className="w-5 h-5" />
-              {lang === 'ar' ? 'لوحة الحرم الذكية' : 'Smart Campus Board'}
-            </div>
-            <h1 className="text-5xl sm:text-6xl font-bold text-ink leading-[1.05]">
-              {lang === 'ar' ? 'كيف أقدر أساعدك؟' : 'How can I help?'}
-            </h1>
-            <p className="mt-4 text-2xl text-ink-muted leading-snug max-w-2xl">
-              {lang === 'ar'
-                ? 'اضغط على المساعد للسؤال بالصوت، أو اختر إجراءً سريعًا.'
-                : 'Tap the assistant to ask by voice, or pick a quick action below.'}
-            </p>
-          </div>
+        {/* Hero — mascot greeting the user with a speech bubble.
+          * Portrait: mascot above bubble. Landscape: side-by-side. */}
+        <section className="mb-10 grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-6 lg:gap-12 items-center">
+          {/* Mascot column — friendly greeter with halo + sparkles + float */}
+          <div className="relative shrink-0 mx-auto lg:mx-0">
+            {/* Soft pulsing halo behind */}
+            <div className="pointer-events-none absolute inset-0 -m-8 rounded-full bg-primary/25 dark:bg-primary/35 blur-3xl animate-glow-soft" />
+            <div className="pointer-events-none absolute inset-0 -m-2 rounded-full bg-privacy/20 dark:bg-privacy/25 blur-2xl animate-glow-soft" style={{ animationDelay: '1.2s' }} />
 
-          {/* Mascot — friendly greeter sitting next to the headline */}
-          <div className="order-1 lg:order-2 relative shrink-0 mx-auto lg:mx-0">
-            {/* Soft glow halo behind the mascot */}
-            <div className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-primary/20 dark:bg-primary/30 blur-3xl animate-glow-soft" />
+            {/* Twinkling sparkles around the mascot */}
+            <Sparkles className="pointer-events-none absolute -top-2 -end-4 w-6 h-6 text-primary animate-sparkle-twinkle" />
+            <Sparkles className="pointer-events-none absolute top-10 -start-6 w-5 h-5 text-privacy animate-sparkle-twinkle" style={{ animationDelay: '0.6s' }} />
+            <Sparkles className="pointer-events-none absolute bottom-12 -end-7 w-4 h-4 text-teal animate-sparkle-twinkle" style={{ animationDelay: '1.1s' }} />
+
             <img
               src="/mascot.png"
               alt={lang === 'ar' ? 'مساعد الحرم الذكي' : 'Smart Campus assistant mascot'}
-              className="relative w-44 sm:w-52 lg:w-64 h-auto select-none animate-fade-in drop-shadow-[0_20px_30px_rgba(47,91,255,0.25)]"
+              className="relative w-48 sm:w-56 lg:w-72 h-auto select-none animate-mascot-float drop-shadow-[0_24px_36px_rgba(47,91,255,0.3)]"
               draggable={false}
             />
+
+            {/* Soft "ground" shadow ellipse beneath the mascot */}
+            <div className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1 w-32 h-3 rounded-full bg-black/20 dark:bg-black/40 blur-md" />
+          </div>
+
+          {/* Speech bubble + supporting copy */}
+          <div className="order-last lg:order-none">
+            {/* Speech bubble greeting — rounded with a tail toward the mascot */}
+            <div className="relative bg-surface border border-primary/30 dark:border-primary/40 rounded-3xl rounded-tl-md lg:rounded-tl-md lg:rounded-tr-3xl p-6 sm:p-7 shadow-[0_12px_40px_-12px_rgba(47,91,255,0.35)] inline-block">
+              {/* Speech bubble tail (pointing back to mascot) */}
+              <span
+                aria-hidden="true"
+                className="hidden lg:block absolute top-8 -start-3 w-6 h-6 rotate-45 bg-surface border-s border-b border-primary/30 dark:border-primary/40 ltr:left-auto ltr:-right-3 ltr:rotate-[135deg] ltr:border-s-0 ltr:border-b-0 ltr:border-e ltr:border-t"
+              />
+
+              <div className="inline-flex items-center gap-2 text-primary text-sm font-bold tracking-wide uppercase mb-3">
+                <Sparkles className="w-4 h-4" />
+                {lang === 'ar' ? 'مرحبًا!' : 'Hi there!'}
+              </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-ink leading-[1.05]">
+                {lang === 'ar' ? 'كيف أقدر أساعدك؟' : 'How can I help?'}
+              </h1>
+              <p className="mt-3 text-xl sm:text-2xl text-ink-muted leading-snug">
+                {lang === 'ar'
+                  ? 'اضغط على المساعد للسؤال بالصوت، أو اختر إجراءً سريعًا.'
+                  : 'Tap the assistant to ask by voice, or pick a quick action below.'}
+              </p>
+            </div>
           </div>
         </section>
 
