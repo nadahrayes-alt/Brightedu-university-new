@@ -237,6 +237,8 @@ export function ServiceDetail() {
                   : a.id === 'sso-login-issues' ? '/tech/sso'
                   : a.id === 'wi-fi-issue' ? '/tech/wifi'
                   : a.id === 'my-support-tickets' ? `/start-request/${service.id}?action=${a.id}`
+                  : a.id === 'todays-menu' ? '/cafeteria/menu'
+                  : a.id === 'active-offers' ? '/cafeteria/offers'
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;
