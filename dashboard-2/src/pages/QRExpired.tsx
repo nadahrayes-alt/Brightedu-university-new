@@ -25,7 +25,7 @@ export function QRExpired() {
             className="absolute inset-0 opacity-30"
             style={{
               backgroundImage:
-                'repeating-linear-gradient(45deg, #6D5DF6 0, #6D5DF6 8px, transparent 8px, transparent 18px)',
+                'repeating-linear-gradient(45deg, #2F5BFF 0, #2F5BFF 8px, transparent 8px, transparent 18px)',
             }}
           />
           <div className="absolute inset-0 flex items-center justify-center">

@@ -70,18 +70,18 @@ body {
 
 html[dir="ltr"] body { font-family: 'Inter', 'IBM Plex Sans', system-ui, sans-serif; }
 
-/* Privacy violet glow ring — adapts in dark mode */
+/* Privacy glow ring — primary blue in both themes (was violet). */
 .halo-violet {
   box-shadow:
-    0 0 0 1px rgba(109,93,246,0.25),
-    0 24px 48px rgba(109,93,246,0.18),
-    0 0 96px rgba(109,93,246,0.12);
+    0 0 0 1px rgba(47,91,255,0.25),
+    0 24px 48px rgba(47,91,255,0.18),
+    0 0 96px rgba(47,91,255,0.12);
 }
 html.dark .halo-violet {
   box-shadow:
-    0 0 0 1px rgba(109,93,246,0.45),
-    0 24px 48px rgba(109,93,246,0.30),
-    0 0 96px rgba(109,93,246,0.20);
+    0 0 0 1px rgba(47,91,255,0.45),
+    0 24px 48px rgba(47,91,255,0.30),
+    0 0 96px rgba(47,91,255,0.20);
 }
 
 /* Welcome hero campus-map line pattern — adapts to theme */

@@ -3,39 +3,37 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Mic, MicOff, Sparkles, ArrowLeft, ArrowRight, Type as TypeIcon,
   Building2, Map, Clock, FileText, Users, CalendarDays,
-  GraduationCap, ShieldCheck, AlertCircle, Loader2, CheckCircle2,
+  GraduationCap, ShieldCheck, AlertCircle, Loader2,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useApp } from '../lib/AppContext';
 import { PrivacyBanner } from '../components/board/PrivacyBanner';
-import { IntentResponseCard } from '../components/board/IntentResponseCard';
 import {
   ASSISTANT_HINT, ASSISTANT_NAME, ASSISTANT_TAGLINE,
-  QUICK_ACTIONS_HEADER, RECOGNITION_PREFIX, TEXT_INPUT_PLACEHOLDER,
+  QUICK_ACTIONS_HEADER, TEXT_INPUT_PLACEHOLDER,
   ASK_BUTTON, TYPE_FALLBACK_CTA, VOICE_STATE_COPY,
 } from '../agent/assistantResponses';
-import {
-  AMBIGUOUS_INTENT, DEMO_PHRASES_AR, DEMO_PHRASES_EN, INTENT_BY_ID,
-} from '../agent/intents';
-import type { IntentDef } from '../agent/intents';
+import { DEMO_PHRASES_AR, DEMO_PHRASES_EN } from '../agent/intents';
 import { matchIntent } from '../agent/agentRouter';
-import type { Lang } from '../agent/lang';
 
 /**
  * Smart Campus Assistant — voice-first kiosk surface.
  *
- * Mic flow: ready → listening → processing → recognised → responding.
- * The recognised intent is rendered inline below the mic stage via the shared
- * `IntentResponseCard`, so voice, text fallback, and quick-action chips all
- * traverse the exact same agent router code.
+ * The assistant home is the entry point only. Every input mode (voice mic,
+ * text fallback, quick action chip) resolves the intent through the same
+ * matcher and then navigates to the chat screen at
+ * `/assistant/intent/<intentId>?q=<utterance>`, where the response card and
+ * follow-up thread live.
  *
- * No real speech recognition runs in the kiosk demo. The mic tap cycles
- * through a curated demo phrase set; each phrase is fed back through the real
- * matcher so the recognition path itself is exercised.
+ * Voice keeps a brief listening / processing animation on this page so the
+ * kiosk feels responsive; once the recogniser settles, control hands off to
+ * the chat screen.
+ *
+ * No real speech recognition runs in the demo — the mic tap cycles through a
+ * curated demo phrase set, each phrase fed back through the real matcher.
  */
 
-type VoiceState = 'ready' | 'listening' | 'processing' | 'understood' | 'responding';
-type RecognitionSource = 'voice' | 'text' | 'quick';
+type VoiceState = 'ready' | 'listening' | 'processing';
 
 interface QuickActionDef {
   intentId: string;
@@ -51,18 +49,18 @@ const QUICK_ACTIONS: QuickActionDef[] = [
   { intentId: 'student-affairs-location', icon: Building2,    ar: 'وين شؤون الطلبة؟',  en: 'Where is Student Affairs?', color: 'primary' },
   { intentId: 'show-campus-map',          icon: Map,          ar: 'عرض الخريطة',        en: 'Show campus map',          color: 'teal' },
   { intentId: 'service-hours',            icon: Clock,        ar: 'مواعيد الخدمات',     en: 'Service hours',            color: 'success' },
-  { intentId: 'document-pickup-info',     icon: FileText,     ar: 'استلام الوثائق',     en: 'Document pickup',          color: 'privacy' },
+  { intentId: 'document-pickup-info',     icon: FileText,     ar: 'استلام الوثائق',     en: 'Document pickup',          color: 'primary' },
   { intentId: 'queue-status',             icon: Users,        ar: 'حالة الانتظار',      en: 'Queue status',             color: 'warning' },
   { intentId: 'events-today',             icon: CalendarDays, ar: 'الفعاليات اليوم',    en: "Today's events",           color: 'danger' },
-  { intentId: 'enrollment-letter',        icon: GraduationCap, ar: 'إصدار إثبات قيد',  en: 'Issue enrollment letter',  color: 'privacy' },
-  { intentId: 'request-status',           icon: ShieldCheck,  ar: 'حالة طلبي',          en: 'My request status',        color: 'privacy' },
+  { intentId: 'enrollment-letter',        icon: GraduationCap, ar: 'إصدار إثبات قيد',  en: 'Issue enrollment letter',  color: 'primary' },
+  { intentId: 'request-status',           icon: ShieldCheck,  ar: 'حالة طلبي',          en: 'My request status',        color: 'primary' },
 ];
 
 const COLOR_CLASSES: Record<QuickActionDef['color'], string> = {
   primary: 'bg-primary/10 dark:bg-primary/20 text-primary border-primary/30',
   teal:    'bg-teal/15 dark:bg-teal/20 text-teal border-teal/30',
   warning: 'bg-warning/15 dark:bg-warning/20 text-warning border-warning/30',
-  privacy: 'bg-privacy/10 dark:bg-privacy/20 text-privacy border-privacy/30',
+  privacy: 'bg-primary/10 dark:bg-primary/20 text-primary border-primary/30',
   success: 'bg-success/15 dark:bg-success/20 text-success border-success/30',
   danger:  'bg-danger/15 dark:bg-danger/20 text-danger border-danger/30',
 };
@@ -74,17 +72,8 @@ export function Assistant() {
   const Arrow = lang === 'ar' ? ArrowLeft : ArrowRight;
 
   const [voiceState, setVoiceState] = useState<VoiceState>('ready');
-  /** Recognised intent (or null while we're still listening). */
-  const [intent, setIntent] = useState<IntentDef | null>(null);
-  /** Verbatim phrase to show under "I understood you want:" */
-  const [recognized, setRecognized] = useState<string>('');
-  /** Language the assistant should reply in for the current recognition.
-   *  Set by the matcher from the input — always tracks the user's language. */
-  const [replyLang, setReplyLang] = useState<Lang>(lang);
   const [showTyping, setShowTyping] = useState(false);
   const [typed, setTyped] = useState('');
-  /** Inline validation message under the typing input (e.g. "type something
-   *  first"). Cleared on next keystroke or successful submit. */
   const [typedError, setTypedError] = useState<string | null>(null);
 
   /** Cycles through demo phrases each time the mic is tapped without input. */
@@ -102,99 +91,58 @@ export function Assistant() {
   }
   useEffect(() => clearTimers, []);
 
-  /** Pick up `?q=...` from any callers that route back to the assistant
-   *  surface (e.g. the standalone AssistantInput on legacy pages). The query
-   *  fires the same inline recognition flow as in-page typing — never opens
-   *  a separate chat page. */
+  /** Pick up `?q=...` from any callers that route back to /assistant
+   *  (e.g. legacy pages). Resolves the intent and forwards to the chat
+   *  screen so the response is rendered in the conversational thread. */
   useEffect(() => {
     const q = searchParams.get('q');
     if (!q) return;
-    // Strip the param so a later refresh doesn't replay the recognition.
     const next = new URLSearchParams(searchParams);
     next.delete('q');
     setSearchParams(next, { replace: true });
-    runRecognition(q, 'text');
+    const match = matchIntent(q, lang);
+    navigate(`/assistant/intent/${match.intent.id}?q=${encodeURIComponent(q)}`, {
+      replace: true,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function resetFlow() {
-    clearTimers();
-    setVoiceState('ready');
-    setIntent(null);
-    setRecognized('');
-    setTypedError(null);
-  }
-
-  /** Drive the listening → processing → understood → responding sequence
-   *  for a chosen utterance. The matcher always runs, so voice, text, and
-   *  quick actions all traverse the same recognition path.
-   *
-   *  When the source is `voice` and the resolved intent has `voiceDirect`
-   *  set (explicit navigation commands like "افتح الخريطة"), the assistant
-   *  flashes the recognition for a beat and then navigates straight to the
-   *  target route — no chat card. Typed input ALWAYS shows the chat card so
-   *  the user can review the recognised request before any navigation. */
-  function runRecognition(
-    utterance: string,
-    source: RecognitionSource,
-    fallbackIntentId?: string,
-  ) {
-    clearTimers();
-    setVoiceState('listening');
-    setIntent(null);
-    setRecognized('');
-
-    // Text input is conversational from the first frame — skip the simulated
-    // listening/processing animation that's only meaningful for voice.
-    const listenMs    = source === 'voice' ? 1400 : 200;
-    const processMs   = source === 'voice' ? 2700 : 500;
-    const respondMs   = source === 'voice' ? 3500 : 700;
-
-    timers.current.push(window.setTimeout(() => setVoiceState('processing'), listenMs));
-    timers.current.push(
-      window.setTimeout(() => {
-        const match = matchIntent(utterance, lang);
-        const resolved =
-          match.intent.id !== AMBIGUOUS_INTENT.id
-            ? match.intent
-            : fallbackIntentId
-              ? INTENT_BY_ID[fallbackIntentId] ?? AMBIGUOUS_INTENT
-              : AMBIGUOUS_INTENT;
-
-        setRecognized(utterance);
-        setIntent(resolved);
-        setReplyLang(match.replyLang);
-        setVoiceState('understood');
-
-        // Voice direct-navigation: brief recognition flash, then navigate.
-        // Quick actions follow voice rules per the spec ("quick actions should
-        // behave exactly like recognised voice intents") — none of the
-        // assistant-home quick actions are flagged voiceDirect today, but the
-        // rule keeps the two paths aligned. Typed input NEVER auto-navigates.
-        if (
-          source !== 'text' &&
-          resolved.voiceDirect &&
-          resolved.voiceDirectRoute
-        ) {
-          const t = window.setTimeout(() => {
-            navigate(resolved.voiceDirectRoute!);
-          }, 900);
-          timers.current.push(t);
-          return;
-        }
-      }, processMs),
-    );
-    timers.current.push(window.setTimeout(() => setVoiceState('responding'), respondMs));
+  /** Resolve `utterance` → matched intent and hand control to the chat
+   *  screen. Voice direct-navigation intents (`افتح الخريطة`, etc.) bypass
+   *  the chat and route straight to their target page. */
+  function routeToChat(utterance: string, source: 'voice' | 'text' | 'quick') {
+    const match = matchIntent(utterance, lang);
+    if (
+      source !== 'text' &&
+      match.intent.voiceDirect &&
+      match.intent.voiceDirectRoute
+    ) {
+      navigate(match.intent.voiceDirectRoute);
+      return;
+    }
+    navigate(`/assistant/intent/${match.intent.id}?q=${encodeURIComponent(utterance)}`);
   }
 
   function onMicTap() {
-    if (voiceState === 'listening' || voiceState === 'processing' || voiceState === 'understood') {
-      resetFlow();
+    if (voiceState === 'listening' || voiceState === 'processing') {
+      // Cancel an in-flight recognition.
+      clearTimers();
+      setVoiceState('ready');
       return;
     }
     const next = samplePool[sampleCursor.current % samplePool.length];
     sampleCursor.current += 1;
-    runRecognition(next.text, 'voice', next.intentId);
+
+    clearTimers();
+    setVoiceState('listening');
+    timers.current.push(window.setTimeout(() => setVoiceState('processing'), 1400));
+    timers.current.push(
+      window.setTimeout(() => {
+        // Hand off to the chat screen with the recognised utterance.
+        routeToChat(next.text, 'voice');
+        setVoiceState('ready');
+      }, 2700),
+    );
   }
 
   function submitTyped() {
@@ -208,16 +156,12 @@ export function Assistant() {
       return;
     }
     setTypedError(null);
-    // Keep `typed` populated so the input still reflects what the user asked
-    // while the recognition flow runs.
-    runRecognition(q, 'text');
+    routeToChat(q, 'text');
   }
 
   function fireQuickAction(qa: QuickActionDef) {
     const text = lang === 'ar' ? qa.ar : qa.en;
-    // Quick actions render a chat-style response with action chips so the
-    // user can review and choose, identical to typed input.
-    runRecognition(text, 'quick', qa.intentId);
+    routeToChat(text, 'quick');
   }
 
   /* ────────────────────  derived UI strings (lang)  ─────────────────────── */
@@ -226,8 +170,6 @@ export function Assistant() {
     switch (voiceState) {
       case 'listening':  return VOICE_STATE_COPY.listening[lang];
       case 'processing': return VOICE_STATE_COPY.processing[lang];
-      case 'understood': return lang === 'ar' ? 'فهمت طلبك' : 'Got it';
-      case 'responding': return lang === 'ar' ? 'اضغط لطرح سؤال آخر' : 'Tap to ask another question';
       default:           return VOICE_STATE_COPY.ready[lang];
     }
   })();
@@ -240,12 +182,6 @@ export function Assistant() {
           : 'Speak now — ask about buildings, services, or your request.';
       case 'processing':
         return lang === 'ar' ? 'لحظة واحدة...' : 'One moment...';
-      case 'understood':
-        return lang === 'ar' ? 'جاري عرض الإجابة' : 'Preparing the answer';
-      case 'responding':
-        return lang === 'ar'
-          ? 'الإجابة جاهزة بالأسفل. تقدر تتابع أو تسأل من جديد.'
-          : 'Answer ready below — follow up or ask again.';
       default:
         return ASSISTANT_HINT[lang];
     }
@@ -284,24 +220,8 @@ export function Assistant() {
               hint={micHint}
             />
 
-            {/* Recognition confirmation — visible while we're showing the answer. */}
-            {(voiceState === 'understood' || voiceState === 'responding') && recognized && (
-              <div className="mt-7 max-w-2xl w-full bg-success/10 dark:bg-success/15 border border-success/30 rounded-2xl px-5 py-4 flex items-start gap-3 animate-fade-in text-start">
-                <CheckCircle2 className="w-6 h-6 text-success shrink-0 mt-0.5" />
-                <div className="min-w-0">
-                  <div className="text-sm font-bold uppercase tracking-wider text-success mb-1">
-                    {RECOGNITION_PREFIX[lang]}
-                  </div>
-                  <div className="text-xl text-ink font-semibold leading-snug">
-                    {recognized}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Text fallback. The input stays mounted across all voice states
-             *  so the user can SEE the loading / recognised / responding flow
-             *  beneath the input — clicking Ask never makes the surface vanish. */}
+            {/* Text fallback. The input stays mounted so the user always has
+             *  the option to type. Submitting routes to the chat screen. */}
             {!showTyping ? (
               <button
                 type="button"
@@ -327,27 +247,20 @@ export function Assistant() {
                         submitTyped();
                       }
                     }}
-                    disabled={voiceState === 'listening' || voiceState === 'processing'}
                     placeholder={TEXT_INPUT_PLACEHOLDER[lang]}
                     aria-invalid={typedError ? 'true' : 'false'}
-                    className={`flex-1 h-[60px] px-5 rounded-2xl bg-surface-2 border text-lg placeholder:text-ink-subtle focus:outline-none focus:bg-surface focus:shadow-focus text-ink disabled:opacity-60 disabled:cursor-not-allowed ${
+                    className={`flex-1 h-[60px] px-5 rounded-2xl bg-surface-2 border text-lg placeholder:text-ink-subtle focus:outline-none focus:bg-surface focus:shadow-focus text-ink ${
                       typedError ? 'border-danger/60' : 'border-border-soft'
                     }`}
                   />
                   <button
                     type="button"
                     onClick={submitTyped}
-                    disabled={voiceState === 'listening' || voiceState === 'processing'}
                     aria-label={ASK_BUTTON[lang]}
-                    className="h-[60px] px-6 rounded-2xl bg-primary text-white text-lg font-semibold hover:bg-primary-600 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="h-[60px] px-6 rounded-2xl bg-primary text-white text-lg font-semibold hover:bg-primary-600 flex items-center justify-center gap-2"
                   >
-                    {voiceState === 'listening' || voiceState === 'processing' ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : null}
                     <span>{ASK_BUTTON[lang]}</span>
-                    {!(voiceState === 'listening' || voiceState === 'processing') && (
-                      <Arrow className="w-5 h-5" />
-                    )}
+                    <Arrow className="w-5 h-5" />
                   </button>
                 </div>
                 {typedError && (
@@ -357,11 +270,6 @@ export function Assistant() {
                   >
                     <AlertCircle className="w-4 h-4" />
                     {typedError}
-                  </p>
-                )}
-                {(voiceState === 'listening' || voiceState === 'processing') && (
-                  <p className="mt-2 text-sm font-semibold text-ink-muted">
-                    {VOICE_STATE_COPY.processing[lang]}
                   </p>
                 )}
               </div>
@@ -397,31 +305,6 @@ export function Assistant() {
             </div>
           </aside>
         </div>
-
-        {/* Response card — shared across voice / text / quick actions. The
-         *  reply language is the one the matcher detected from the user's
-         *  utterance, so the assistant always answers in the user's language
-         *  even when it differs from the kiosk's UI language. */}
-        {voiceState === 'responding' && intent && (
-          <div className="bg-surface border border-border-soft rounded-3xl p-7 sm:p-8 animate-fade-in">
-            <IntentResponseCard
-              intent={intent}
-              recognizedText={recognized}
-              replyLang={replyLang}
-              onRetry={resetFlow}
-            />
-          </div>
-        )}
-
-        <div className="mt-8 flex">
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 h-14 px-5 rounded-2xl text-base font-semibold text-ink-muted hover:text-ink hover:bg-surface-2 transition"
-          >
-            <Arrow className="w-5 h-5" />
-            <span>{lang === 'ar' ? 'الرجوع' : 'Back'}</span>
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -440,13 +323,11 @@ function MicStage({
 }) {
   const isListening  = state === 'listening';
   const isProcessing = state === 'processing';
-  const cancelable   = isListening || isProcessing || state === 'understood';
+  const cancelable   = isListening || isProcessing;
 
-  const ariaLabel = (() => {
-    if (cancelable) return lang === 'ar' ? 'إيقاف الاستماع' : 'Stop listening';
-    if (state === 'responding') return lang === 'ar' ? 'سؤال جديد' : 'Ask again';
-    return lang === 'ar' ? 'بدء الاستماع' : 'Start listening';
-  })();
+  const ariaLabel = cancelable
+    ? (lang === 'ar' ? 'إيقاف الاستماع' : 'Stop listening')
+    : (lang === 'ar' ? 'بدء الاستماع'   : 'Start listening');
 
   const Icon = cancelable ? MicOff : Mic;
 
@@ -460,7 +341,7 @@ function MicStage({
           </>
         )}
         {isProcessing && (
-          <span className="absolute inset-0 -m-2 rounded-full bg-warning/30 blur-2xl animate-glow-soft" />
+          <span className="absolute inset-0 -m-2 rounded-full bg-primary/30 blur-2xl animate-glow-soft" />
         )}
         <button
           onClick={onTap}
@@ -470,7 +351,7 @@ function MicStage({
             isListening
               ? 'bg-primary text-white shadow-[0_0_80px_-8px_rgba(47,91,255,0.7)]'
               : isProcessing
-                ? 'bg-warning text-white shadow-[0_0_60px_-12px_rgba(245,158,11,0.6)]'
+                ? 'bg-primary text-white shadow-[0_0_60px_-12px_rgba(47,91,255,0.6)]'
                 : 'bg-primary/10 dark:bg-primary/20 text-primary hover:bg-primary/15 dark:hover:bg-primary/25'
           }`}
         >
@@ -512,6 +393,3 @@ function VoiceWave() {
     </div>
   );
 }
-
-/** Re-export for code that previously imported the inline ambiguous helper. */
-export { AlertCircle as AmbiguousIcon };

@@ -37,11 +37,15 @@ export default {
         },
         teal:    { DEFAULT: '#007C8A', 50: '#E6F5F7', 100: '#CCEBEF' },
         support: '#64A2D9',
-        privacy: { DEFAULT: '#6D5DF6', 50: '#F1EFFF', 100: '#E4DFFE' },
+        // Privacy / purple were a violet (#6D5DF6 / #5D4FBE). Remapped to the
+        // primary blue so every `bg-privacy/*`, `text-privacy`, `border-privacy`,
+        // `bg-purple-soft` etc. across the kiosk renders in the primary palette
+        // without touching ~150 callsites.
+        privacy: { DEFAULT: '#2F5BFF', 50: '#EEF4FF', 100: '#DCE6FF' },
         success: { DEFAULT: '#16A34A', soft: '#DCFCE7' },
         warning: { DEFAULT: '#F59E0B', soft: '#FEF3C7' },
         danger:  { DEFAULT: '#DC2626', soft: '#FEE2E2' },
-        purple:  { DEFAULT: '#5D4FBE', soft: '#EFEAFA' },
+        purple:  { DEFAULT: '#2F5BFF', soft: '#EEF4FF' },
       },
       fontFamily: {
         sans: ['"IBM Plex Sans Arabic"', '"IBM Plex Sans"', 'Inter', 'system-ui', 'sans-serif'],
