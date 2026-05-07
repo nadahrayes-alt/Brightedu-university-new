@@ -6,6 +6,7 @@ import { Welcome } from './pages/Welcome';
 import { LangModal } from './pages/LangModal';
 import { Assistant } from './pages/Assistant';
 import { AssistantAnswer } from './pages/AssistantAnswer';
+import { AssistantIntent } from './pages/AssistantIntent';
 import { QuickActions } from './pages/QuickActions';
 import { ServicesDirectory } from './pages/ServicesDirectory';
 import { ServiceDetail } from './pages/ServiceDetail';
@@ -65,8 +66,13 @@ export default function App() {
           {/* S03 · Assistant empty */}
           <Route path="/assistant" element={<Assistant />} />
 
-          {/* S04 · Assistant Q+A */}
+          {/* S04 · Assistant Q+A — service-based public-safe inquiry response. */}
           <Route path="/assistant/answer/:id" element={<AssistantAnswer />} />
+
+          {/* Intent-based assistant deep link. Renders the same response card
+              the inline assistant uses, so action chips that link via
+              `#intent:<id>` resolve here with identical privacy logic. */}
+          <Route path="/assistant/intent/:intentId" element={<AssistantIntent />} />
 
           {/* S05 · Quick actions grid */}
           <Route path="/quick-actions" element={<QuickActions />} />
