@@ -1,11 +1,15 @@
 /**
- * Smart Campus Assistant — intent router.
+ * Smart Campus Assistant — multilingual intent router.
  *
- * Maps a free-text utterance (voice transcription or text fallback) to an
- * intent in the catalog. The matcher is deliberately simple: it normalises
- * Arabic and English and scores each phrase by token overlap. If no candidate
- * crosses a confidence threshold the router returns the ambiguous intent so
- * the UI can prompt the user to clarify.
+ * Pipeline:
+ *   raw input
+ *     → language detection (ar / en / mixed / unknown)
+ *     → normalisation (Arabic diacritics, alef variants, dialect collapsing,
+ *       latin lowercase + punctuation)
+ *     → intent matching (substring + token overlap against the catalog's
+ *       multilingual phrase synonyms)
+ *     → confidence level (high / medium / low / none)
+ *     → reply-language pick (detected language, falling back to UI language)
  *
  * No JSX, no React. Pure data → data so it can be unit-tested in isolation.
  */
@@ -19,14 +23,16 @@ import {
   type IntentDef,
 } from './intents';
 import { requiresVerification, buildVerifyHref } from './agentRules';
+import { detectLanguage, pickReplyLang, type Lang, type LangDetection } from './lang';
 
 /** Normalise an Arabic or English string for matching. Strips diacritics,
- *  unifies alef/yaa/taa-marbuta variants, drops punctuation, and lowercases. */
+ *  unifies alef/yaa/taa-marbuta variants, collapses common Saudi-dialect
+ *  spellings (ابغى/ابى/ابي → ابي), drops punctuation, and lowercases. */
 export function normalize(input: string): string {
-  return input
+  let out = input
     .toLowerCase()
     .normalize('NFKD')
-    // strip Arabic diacritics (U+064B–U+0652, U+0670, U+06D6–U+06ED)
+    // strip Arabic diacritics
     .replace(/[ً-ْٰۖ-ۭ]/g, '')
     // unify alef family
     .replace(/[آأإٱ]/g, 'ا')
@@ -37,10 +43,31 @@ export function normalize(input: string): string {
     // unify hamza on waw / yaa
     .replace(/[ؤ]/g, 'و')
     .replace(/[ئ]/g, 'ي')
-    // collapse non-letters to spaces (keep arabic + latin + digits)
+    // tatweel
+    .replace(/ـ/g, '');
+
+  // Saudi-dialect / casual collapsing — keeps the matcher tolerant of common
+  // spellings without forcing authors to enumerate every variant.
+  out = out
+    .replace(/\bابغي\b/g, 'ابي')
+    .replace(/\bابغى\b/g, 'ابي')
+    .replace(/\bابى\b/g, 'ابي')
+    .replace(/\bأبغي\b/g, 'ابي')
+    .replace(/\bأبغى\b/g, 'ابي')
+    .replace(/\bاريد\b/g, 'ابي')
+    .replace(/\bأريد\b/g, 'ابي')
+    .replace(/\bوش\b/g, 'ايش')
+    .replace(/\bإيش\b/g, 'ايش')
+    .replace(/\bفين\b/g, 'وين')
+    .replace(/\bأين\b/g, 'وين');
+
+  // collapse non-letters (keep arabic + latin + digits)
+  out = out
     .replace(/[^؀-ۿݐ-ݿa-z0-9]+/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+
+  return out;
 }
 
 function tokens(input: string): string[] {
@@ -58,8 +85,6 @@ function scorePhrase(query: string, phrase: string): number {
   // Exact match wins.
   if (nq === np) return 100;
 
-  // Substring of either direction is a strong signal — short phrases should
-  // still match longer queries that contain them.
   let score = 0;
   if (nq.includes(np)) score += 60;
   else if (np.includes(nq)) score += 40;
@@ -70,47 +95,87 @@ function scorePhrase(query: string, phrase: string): number {
 
   let overlap = 0;
   for (const t of pTokens) if (qTokens.has(t)) overlap += 1;
-  // Token-overlap ratio (0..1) scaled into the score.
   score += (overlap / pTokens.length) * 30;
 
-  // Penalise tiny token-overlap with long query (likely a different request).
   if (overlap === 0) return Math.max(score - 10, 0);
   return score;
 }
 
+export type Confidence = 'high' | 'medium' | 'low' | 'none';
+
 export interface RouterMatch {
   intent: IntentDef;
-  /** 0..100. Anything below `MIN_CONFIDENCE` is treated as ambiguous. */
+  /** 0..130. Anything below `MIN_CONFIDENCE` falls back to ambiguous. */
   confidence: number;
-  /** The raw phrase that matched best (useful for diagnostics). */
+  level: Confidence;
+  /** Detected input language and reply-language pick. */
+  detection: LangDetection;
+  replyLang: Lang;
   matchedPhrase?: string;
 }
 
 const MIN_CONFIDENCE = 35;
+const HIGH_CONFIDENCE = 70;
+
+function levelFor(score: number): Confidence {
+  if (score === 0) return 'none';
+  if (score < MIN_CONFIDENCE) return 'low';
+  if (score < HIGH_CONFIDENCE) return 'medium';
+  return 'high';
+}
 
 /** Match a free-text query to its best-fitting intent. Falls back to the
- *  ambiguous intent below the confidence threshold. */
-export function matchIntent(query: string): RouterMatch {
+ *  ambiguous intent below the confidence threshold. The reply language is
+ *  always set: the dominant language of the input, or `uiLang` for empty /
+ *  non-linguistic input. */
+export function matchIntent(query: string, uiLang: Lang = 'ar'): RouterMatch {
+  const detection = detectLanguage(query);
+  const replyLang = pickReplyLang(detection, uiLang);
+
   if (!query || !normalize(query)) {
-    return { intent: AMBIGUOUS_INTENT, confidence: 0 };
+    return {
+      intent: AMBIGUOUS_INTENT,
+      confidence: 0,
+      level: 'none',
+      detection,
+      replyLang,
+    };
   }
 
-  let best: RouterMatch = { intent: AMBIGUOUS_INTENT, confidence: 0 };
+  let bestIntent: IntentDef = AMBIGUOUS_INTENT;
+  let bestScore = 0;
+  let bestPhrase: string | undefined;
 
   for (const intent of INTENTS) {
     const allPhrases = [...intent.phrasesAr, ...intent.phrasesEn];
     for (const phrase of allPhrases) {
       const s = scorePhrase(query, phrase);
-      if (s > best.confidence) {
-        best = { intent, confidence: s, matchedPhrase: phrase };
+      if (s > bestScore) {
+        bestIntent = intent;
+        bestScore = s;
+        bestPhrase = phrase;
       }
     }
   }
 
-  if (best.confidence < MIN_CONFIDENCE) {
-    return { intent: AMBIGUOUS_INTENT, confidence: best.confidence };
+  if (bestScore < MIN_CONFIDENCE) {
+    return {
+      intent: AMBIGUOUS_INTENT,
+      confidence: bestScore,
+      level: 'low',
+      detection,
+      replyLang,
+    };
   }
-  return best;
+
+  return {
+    intent: bestIntent,
+    confidence: bestScore,
+    level: levelFor(bestScore),
+    detection,
+    replyLang,
+    matchedPhrase: bestPhrase,
+  };
 }
 
 /** Look up an intent by its ID — used by quick-action chips and intent links. */
@@ -134,24 +199,15 @@ export function resolveActionHref(
 ): string | null {
   if (!action.to) return null;
 
-  // Intent shortcut → resolve to the answer page for that intent.
   if (action.to.startsWith('#intent:')) {
     const intentId = action.to.slice('#intent:'.length);
     return `/assistant/intent/${intentId}`;
   }
 
-  // Verify-kind action: always gate behind /verify with the destination as
-  // the post-verification target.
   if (action.kind === 'verify') {
     return buildVerifyHref(action.to);
   }
 
-  // Defensive: any private intent action with a target that is NOT the
-  // refusal / map / hours / catalog public pages should still gate behind
-  // verify, even if the action wasn't explicitly tagged. We rely on intent
-  // authoring to mark verify actions correctly, but this guard keeps us
-  // honest if a `kind` is forgotten on a private/restricted/human-decision
-  // intent.
   if (
     requiresVerification(intentCategory) &&
     !action.to.startsWith('/refusal') &&

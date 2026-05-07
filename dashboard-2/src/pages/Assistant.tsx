@@ -19,6 +19,7 @@ import {
 } from '../agent/intents';
 import type { IntentDef } from '../agent/intents';
 import { matchIntent } from '../agent/agentRouter';
+import type { Lang } from '../agent/lang';
 
 /**
  * Smart Campus Assistant — voice-first kiosk surface.
@@ -77,6 +78,9 @@ export function Assistant() {
   const [intent, setIntent] = useState<IntentDef | null>(null);
   /** Verbatim phrase to show under "I understood you want:" */
   const [recognized, setRecognized] = useState<string>('');
+  /** Language the assistant should reply in for the current recognition.
+   *  Set by the matcher from the input — always tracks the user's language. */
+  const [replyLang, setReplyLang] = useState<Lang>(lang);
   const [showTyping, setShowTyping] = useState(false);
   const [typed, setTyped] = useState('');
   /** Inline validation message under the typing input (e.g. "type something
@@ -149,7 +153,7 @@ export function Assistant() {
     timers.current.push(window.setTimeout(() => setVoiceState('processing'), listenMs));
     timers.current.push(
       window.setTimeout(() => {
-        const match = matchIntent(utterance);
+        const match = matchIntent(utterance, lang);
         const resolved =
           match.intent.id !== AMBIGUOUS_INTENT.id
             ? match.intent
@@ -159,6 +163,7 @@ export function Assistant() {
 
         setRecognized(utterance);
         setIntent(resolved);
+        setReplyLang(match.replyLang);
         setVoiceState('understood');
 
         // Voice direct-navigation: brief recognition flash, then navigate.
@@ -393,12 +398,16 @@ export function Assistant() {
           </aside>
         </div>
 
-        {/* Response card — shared across voice / text / quick actions. */}
+        {/* Response card — shared across voice / text / quick actions. The
+         *  reply language is the one the matcher detected from the user's
+         *  utterance, so the assistant always answers in the user's language
+         *  even when it differs from the kiosk's UI language. */}
         {voiceState === 'responding' && intent && (
           <div className="bg-surface border border-border-soft rounded-3xl p-7 sm:p-8 animate-fade-in">
             <IntentResponseCard
               intent={intent}
               recognizedText={recognized}
+              replyLang={replyLang}
               onRetry={resetFlow}
             />
           </div>

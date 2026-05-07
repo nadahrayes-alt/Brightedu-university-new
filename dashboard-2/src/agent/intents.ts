@@ -88,6 +88,96 @@ const verifyAndBack: IntentAction[] = [
 ];
 
 /** ═════════════════════════════════════════════════════════════════════
+ *  GREETING — friendly opener that surfaces the most useful follow-ups.
+ *  Always public-safe; greeting is never gated.
+ *  ═════════════════════════════════════════════════════════════════════ */
+
+const GREETING_INTENT: IntentDef = {
+  id: 'greeting',
+  category: 'public-safe',
+  recognitionAr: 'تحية',
+  recognitionEn: 'Greeting',
+  responseAr: 'أهلًا بك، كيف أقدر أساعدك اليوم؟',
+  responseEn: 'Hello, how can I help you today?',
+  actions: [
+    { ar: 'وين شؤون الطلبة؟', en: 'Where is Student Affairs?', to: '#intent:student-affairs-location', variant: 'primary',   iconKind: 'building' },
+    { ar: 'عرض الخريطة',       en: 'Show campus map',           to: '#intent:show-campus-map',          variant: 'secondary', iconKind: 'map' },
+    { ar: 'مواعيد الخدمات',    en: 'Service hours',             to: '#intent:service-hours',            variant: 'secondary', iconKind: 'clock' },
+    { ar: 'استلام الوثائق',    en: 'Document pickup',           to: '#intent:document-pickup-info',     variant: 'secondary', iconKind: 'document' },
+    { ar: 'حالة طلبي',          en: 'My request status',         to: '#intent:request-status',           variant: 'secondary', iconKind: 'shield' },
+  ],
+  phrasesAr: [
+    'مرحبا', 'مرحباً', 'هلا', 'هلا والله', 'هلابك', 'اهلا', 'اهلين', 'أهلًا', 'أهلا', 'أهلين',
+    'السلام عليكم', 'سلام عليكم', 'سلام', 'صباح الخير', 'مساء الخير', 'صباحو', 'مسا الخير',
+    'هاي', 'مرحباً بك', 'يا هلا',
+  ],
+  phrasesEn: [
+    'hi', 'hello', 'hey', 'hi there', 'hey there', 'good morning', 'good afternoon',
+    'good evening', 'greetings', 'yo', 'salam', 'salam alaikum', 'assalamualaikum',
+    'as-salamu alaykum',
+  ],
+};
+
+/** ═════════════════════════════════════════════════════════════════════
+ *  CLARIFICATION UMBRELLAS — fire when the user gives a single broad noun
+ *  that could mean several things ("القبول" / "admissions" / "وثيقة").
+ *  Category 'ambiguous' so the badge reads "needs clarification" and the
+ *  response card asks the user to pick a specific path.
+ *  ═════════════════════════════════════════════════════════════════════ */
+
+const CLARIFY_INTENTS: IntentDef[] = [
+  {
+    id: 'admissions-clarify',
+    category: 'ambiguous',
+    recognitionAr: 'القبول والتسجيل',
+    recognitionEn: 'Admissions',
+    responseAr: 'هل تقصد معلومات عامة عن القبول والتسجيل، أم متابعة حالة قبولك؟',
+    responseEn: 'Do you mean general Admissions & Registration information, or your personal admission status?',
+    actions: [
+      { ar: 'معلومات القبول والتسجيل', en: 'Admissions information',  to: '/admissions/inquiry',         variant: 'primary',   iconKind: 'list' },
+      { ar: 'حالة قبولي',                en: 'My admission status',     to: '#intent:admission-status',    variant: 'secondary', iconKind: 'shield' },
+      { ar: 'عرض الموقع',                en: 'Show location',           to: '/map/admissions',             variant: 'secondary', iconKind: 'map' },
+      { ar: 'رجوع',                       en: 'Back',                    kind: 'back',                      variant: 'cancel',    iconKind: 'back' },
+    ],
+    phrasesAr: ['القبول', 'التسجيل', 'قبول'],
+    phrasesEn: ['admissions', 'admission', 'registration', 'admission inquiry'],
+  },
+  {
+    id: 'document-clarify',
+    category: 'ambiguous',
+    recognitionAr: 'الوثائق',
+    recognitionEn: 'Documents',
+    responseAr: 'أي نوع من الوثائق تحتاج؟',
+    responseEn: 'Which type of document do you need?',
+    actions: [
+      { ar: 'وثيقة تخرج',     en: 'Graduation certificate', to: '#intent:pickup-graduation',     variant: 'primary',   iconKind: 'document' },
+      { ar: 'كشف درجات',      en: 'Transcript',             to: '#intent:pickup-transcript',      variant: 'secondary', iconKind: 'document' },
+      { ar: 'إثبات قيد',       en: 'Enrollment letter',       to: '#intent:enrollment-letter',     variant: 'secondary', iconKind: 'document' },
+      { ar: 'نقطة الاستلام',  en: 'Pickup point',            to: '#intent:document-pickup-info',  variant: 'secondary', iconKind: 'list' },
+      { ar: 'رجوع',             en: 'Back',                    kind: 'back',                        variant: 'cancel',    iconKind: 'back' },
+    ],
+    phrasesAr: ['وثيقة', 'وثائق', 'مستند', 'مستندات', 'شهادة', 'شهاده'],
+    phrasesEn: ['document', 'documents', 'certificate', 'paper', 'official paper'],
+  },
+  {
+    id: 'appointment-clarify',
+    category: 'ambiguous',
+    recognitionAr: 'حجز موعد',
+    recognitionEn: 'Appointment',
+    responseAr: 'أي نوع من المواعيد؟',
+    responseEn: 'Which kind of appointment?',
+    actions: [
+      { ar: 'موعد طبي',          en: 'Medical appointment',  to: '#intent:book-appointment',  variant: 'primary',   iconKind: 'calendar' },
+      { ar: 'المواعيد المتاحة', en: 'Available slots',       to: '/clinic/appointments',      variant: 'secondary', iconKind: 'calendar' },
+      { ar: 'العيادة',            en: 'Clinic info',          to: '/clinic/info',              variant: 'secondary', iconKind: 'cross' },
+      { ar: 'رجوع',                en: 'Back',                 kind: 'back',                    variant: 'cancel',    iconKind: 'back' },
+    ],
+    phrasesAr: ['موعد', 'مواعيد', 'احجز موعد', 'حجز موعد'],
+    phrasesEn: ['appointment', 'appointments', 'book a slot'],
+  },
+];
+
+/** ═════════════════════════════════════════════════════════════════════
  *  PUBLIC-SAFE / GREEN — answered directly on the kiosk.
  *  ═════════════════════════════════════════════════════════════════════ */
 
@@ -105,8 +195,17 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'خدمات شؤون الطلبة',    en: 'Student Affairs services', to: '/service/student-affairs',  variant: 'secondary', iconKind: 'building' },
       { ar: 'رجوع',                 en: 'Back',                 kind: 'back',                         variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['وين شؤون الطلبة', 'شؤون الطلبة', 'مكان شؤون الطلبة', 'موقع شؤون الطلبة'],
-    phrasesEn: ['where is student affairs', 'student affairs', 'student affairs location'],
+    phrasesAr: [
+      'وين شؤون الطلبة', 'وين شؤون الطلاب', 'وين شئون الطلبة',
+      'شؤون الطلبة', 'شؤون الطلاب', 'شئون الطلبة', 'شئون الطلاب',
+      'شؤون الطالب', 'مكان شؤون الطلبة', 'موقع شؤون الطلبة',
+      'ابغى شؤون الطلبة', 'ابي شؤون الطلبة', 'أبي شؤون الطلبة',
+      'وين student affairs', 'وين الطلبة',
+    ],
+    phrasesEn: [
+      'where is student affairs', 'student affairs', 'student affairs location',
+      'student services', 'student office', 'students affairs', 'office of student affairs',
+    ],
   },
   {
     id: 'admissions-location',
@@ -121,8 +220,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'استفسار قبول', en: 'Admission inquiry', to: '/admissions/inquiry',      variant: 'secondary', iconKind: 'list' },
       { ar: 'رجوع',         en: 'Back',             kind: 'back',                    variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['وين القبول والتسجيل', 'القبول والتسجيل', 'مكان القبول'],
-    phrasesEn: ['where is admissions', 'admissions and registration', 'admissions'],
+    phrasesAr: [
+      'وين القبول والتسجيل', 'القبول والتسجيل', 'مكان القبول والتسجيل',
+      'موقع القبول', 'مبنى القبول',
+    ],
+    phrasesEn: [
+      'where is admissions and registration', 'admissions and registration',
+      'admissions office', 'registration office', 'admissions building',
+    ],
   },
   {
     id: 'show-campus-map',
@@ -136,8 +241,15 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'الخدمات',     en: 'Services',     to: '/services',      variant: 'secondary', iconKind: 'list' },
       { ar: 'رجوع',        en: 'Back',         kind: 'back',         variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['الخريطة', 'اعرض الخريطة', 'عرض الخريطة', 'خريطة الحرم'],
-    phrasesEn: ['show the map', 'campus map', 'show campus map', 'map'],
+    phrasesAr: [
+      'الخريطة', 'خريطه', 'اعرض الخريطة', 'عرض الخريطة', 'خريطة الحرم',
+      'وريني الخريطة', 'وريني خريطة', 'ابي خريطة', 'ابغى خريطة',
+      'الموقع', 'موقع الحرم', 'الاتجاهات', 'كيف اوصل',
+    ],
+    phrasesEn: [
+      'show the map', 'campus map', 'show campus map', 'map', 'where', 'directions',
+      'route', 'wayfinding', 'how to get', 'how do i get to', 'location', 'navigation',
+    ],
   },
   {
     id: 'cafeteria-info',
@@ -152,8 +264,15 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'العروض النشطة',  en: 'Active offers',  to: '/cafeteria/offers',      variant: 'secondary', iconKind: 'sparkle' },
       { ar: 'رجوع',           en: 'Back',           kind: 'back',                 variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['متى تفتح الكافتيريا', 'مواعيد الكافتيريا', 'الكافتيريا', 'أقرب كافتيريا'],
-    phrasesEn: ['cafeteria hours', 'when does the cafeteria open', 'nearest cafeteria', 'cafeteria'],
+    phrasesAr: [
+      'متى تفتح الكافتيريا', 'مواعيد الكافتيريا', 'الكافتيريا', 'كافتيريا',
+      'أقرب كافتيريا', 'اقرب كافتيريا', 'وين الكافتيريا', 'مطعم الجامعة',
+      'وين اكل', 'مكان الاكل',
+    ],
+    phrasesEn: [
+      'cafeteria hours', 'when does the cafeteria open', 'nearest cafeteria',
+      'cafeteria', 'food', 'food court', 'where to eat', 'meals', 'restaurant',
+    ],
   },
   {
     id: 'cafeteria-menu',
@@ -167,8 +286,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'العروض',       en: 'Offers',         to: '/cafeteria/offers', variant: 'secondary', iconKind: 'sparkle' },
       { ar: 'رجوع',         en: 'Back',           kind: 'back',            variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['قائمة الطعام', 'قائمة الطعام اليوم', 'منيو الكافتيريا'],
-    phrasesEn: ['cafeteria menu', "today's menu", 'food menu'],
+    phrasesAr: [
+      'قائمة الطعام', 'قائمة الطعام اليوم', 'منيو الكافتيريا', 'المنيو', 'منيو',
+      'وجبات اليوم', 'الاكل اليوم', 'وش الاكل',
+    ],
+    phrasesEn: [
+      'cafeteria menu', "today's menu", 'food menu', 'menu', 'meals today',
+      'lunch menu', "what's for food",
+    ],
   },
   {
     id: 'events-today',
@@ -182,8 +307,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'الأندية',        en: 'Clubs',         to: '/clubs/directory',  variant: 'secondary', iconKind: 'list' },
       { ar: 'رجوع',           en: 'Back',          kind: 'back',            variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['فعاليات اليوم', 'الفعاليات اليوم', 'الفعاليات', 'أنشطة اليوم'],
-    phrasesEn: ['events today', "today's events", 'activities today'],
+    phrasesAr: [
+      'فعاليات اليوم', 'الفعاليات اليوم', 'الفعاليات', 'أنشطة اليوم', 'الأنشطة',
+      'الانشطه', 'فعاليات', 'انشطه', 'وش الفعاليات', 'فيه فعاليات',
+    ],
+    phrasesEn: [
+      'events today', "today's events", 'activities today', 'events', 'activities',
+      'campus events', 'whats happening today',
+    ],
   },
   {
     id: 'queue-status',
@@ -197,8 +328,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'موقع شؤون الطلبة',   en: 'Student Affairs map', to: '/map/student-affairs',  variant: 'secondary', iconKind: 'map' },
       { ar: 'رجوع',               en: 'Back',               kind: 'back',                 variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['حالة الانتظار', 'الانتظار', 'الزحمة', 'كم مدة الانتظار'],
-    phrasesEn: ['queue status', 'wait time', 'how busy is it', 'congestion'],
+    phrasesAr: [
+      'حالة الانتظار', 'الانتظار', 'الزحمة', 'الزحمه', 'كم مدة الانتظار',
+      'كم اللي قدامي', 'الطوابير', 'الدور', 'كم الدور',
+    ],
+    phrasesEn: [
+      'queue status', 'wait time', 'how busy is it', 'congestion', 'queue',
+      'queue length', 'how long is the wait', 'busy',
+    ],
   },
   {
     id: 'service-hours',
@@ -212,8 +349,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'الخريطة',      en: 'Map',           to: '/map/main-gate', variant: 'secondary', iconKind: 'map' },
       { ar: 'رجوع',         en: 'Back',          kind: 'back',         variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['مواعيد الخدمات', 'ساعات العمل', 'الخدمات', 'دوام الخدمات'],
-    phrasesEn: ['service hours', 'working hours', 'services', 'opening hours'],
+    phrasesAr: [
+      'مواعيد الخدمات', 'ساعات العمل', 'الخدمات', 'دوام الخدمات',
+      'الدوام', 'وقت الدوام', 'الخدمه', 'دليل الخدمات',
+    ],
+    phrasesEn: [
+      'service hours', 'working hours', 'services', 'opening hours',
+      'service times', 'department hours', 'office hours',
+    ],
   },
   {
     id: 'document-pickup-info',
@@ -228,8 +371,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'متابعة طلبي',     en: 'Track my request', to: '#intent:request-status', variant: 'secondary', iconKind: 'document' },
       { ar: 'رجوع',            en: 'Back',          kind: 'back',                  variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['وين أستلم الوثائق', 'استلام الوثائق', 'مكان الاستلام'],
-    phrasesEn: ['where do i pick up documents', 'document pickup', 'pickup location'],
+    phrasesAr: [
+      'وين أستلم الوثائق', 'استلام الوثائق', 'مكان الاستلام',
+      'مكتب الاستلام', 'نقطة الاستلام', 'وين الوثائق',
+    ],
+    phrasesEn: [
+      'where do i pick up documents', 'document pickup', 'pickup location',
+      'pickup point', 'document collection', 'collect documents',
+    ],
   },
   {
     id: 'library-info',
@@ -244,8 +393,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'عرض الموقع',         en: 'Show on map',         to: '/map/library',         variant: 'secondary', iconKind: 'map' },
       { ar: 'رجوع',                en: 'Back',                 kind: 'back',               variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['وين المكتبة', 'المكتبة', 'موقع المكتبة', 'البحث في الفهرس'],
-    phrasesEn: ['where is the library', 'library', 'library location', 'search the catalog'],
+    phrasesAr: [
+      'وين المكتبة', 'المكتبة', 'موقع المكتبة', 'البحث في الفهرس',
+      'مكان المكتبة', 'مكتبة الجامعة', 'فهرس المكتبة', 'كتاب',
+    ],
+    phrasesEn: [
+      'where is the library', 'library', 'library location', 'search the catalog',
+      'campus library', 'find a book', 'book search',
+    ],
   },
   {
     id: 'tech-support-info',
@@ -260,8 +415,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'عرض الموقع',       en: 'Show on map',    to: '/map/tech-support', variant: 'secondary', iconKind: 'map' },
       { ar: 'رجوع',              en: 'Back',           kind: 'back',     variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['وين الدعم التقني', 'الدعم التقني'],
-    phrasesEn: ['where is tech support', 'tech support'],
+    phrasesAr: [
+      'وين الدعم التقني', 'الدعم التقني', 'الدعم الفني', 'دعم تقني',
+      'مكتب الدعم', 'دعم فني',
+    ],
+    phrasesEn: [
+      'where is tech support', 'tech support', 'technical support',
+      'it support', 'help desk', 'support office',
+    ],
   },
   {
     id: 'wifi-help',
@@ -275,8 +436,15 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'فتح تذكرة دعم', en: 'Open a ticket',   to: '#intent:support-ticket-open', variant: 'secondary', iconKind: 'document' },
       { ar: 'رجوع',           en: 'Back',            kind: 'back',          variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['مشكلة في الواي فاي', 'الواي فاي', 'الإنترنت ما يشتغل', 'مشكلة واي فاي'],
-    phrasesEn: ['wifi issue', 'wifi problem', 'internet not working', 'wi-fi'],
+    phrasesAr: [
+      'مشكلة في الواي فاي', 'الواي فاي', 'الإنترنت ما يشتغل', 'مشكلة واي فاي',
+      'الانترنت', 'الواي فاي ما يشتغل', 'مافي انترنت', 'مافي واي فاي',
+      'wifi مشكلة', 'مشكلة wifi',
+    ],
+    phrasesEn: [
+      'wifi issue', 'wifi problem', 'internet not working', 'wi-fi', 'wifi',
+      'internet', 'no internet', 'connection issue', 'network problem',
+    ],
   },
   {
     id: 'sso-help',
@@ -290,8 +458,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'إعادة تعيين كلمة المرور', en: 'Reset password', to: '#intent:reset-password',    variant: 'secondary', iconKind: 'shield' },
       { ar: 'رجوع',                  en: 'Back',            kind: 'back',                     variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['مشاكل الدخول الموحد', 'الدخول الموحد', 'sso', 'مشكلة دخول'],
-    phrasesEn: ['sso issues', 'sso login', 'single sign on', 'login issues'],
+    phrasesAr: [
+      'مشاكل الدخول الموحد', 'الدخول الموحد', 'sso', 'مشكلة دخول',
+      'مشكلة تسجيل دخول', 'ما اقدر ادخل', 'مشكلة في الحساب',
+    ],
+    phrasesEn: [
+      'sso issues', 'sso login', 'single sign on', 'login issues', 'login problem',
+      'cant log in', "can't log in", 'sign in issue',
+    ],
   },
   {
     id: 'emergency-info',
@@ -305,8 +479,14 @@ const PUBLIC_INTENTS: IntentDef[] = [
       { ar: 'موقع العيادة', en: 'Clinic location',  to: '/map/clinic',       variant: 'secondary', iconKind: 'map' },
       { ar: 'رجوع',          en: 'Back',             kind: 'back',           variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['الحالات الطارئة', 'الطوارئ', 'الإسعاف', 'حالة طارئة'],
-    phrasesEn: ['emergency', 'urgent', 'emergency information', 'help'],
+    phrasesAr: [
+      'الحالات الطارئة', 'الطوارئ', 'الإسعاف', 'حالة طارئة', 'طوارئ',
+      'حالة طارئه', 'محتاج مساعده طارئه', 'اسعاف', 'حادث',
+    ],
+    phrasesEn: [
+      'emergency', 'urgent', 'emergency information', 'urgent help',
+      'medical emergency', 'ambulance', 'urgent care', 'accident',
+    ],
   },
   {
     id: 'general-consultation',
@@ -434,8 +614,16 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'بدء التحقق', en: 'Start verification', kind: 'verify', to: '/start-request/document-pickup?action=my-request-status', variant: 'privacy', iconKind: 'shield' },
       { ar: 'رجوع',        en: 'Back',                 kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['حالة طلبي', 'متابعة طلب', 'وين طلبي', 'حالة الطلب', 'متابعة الطلب'],
-    phrasesEn: ['my request status', 'track my request', 'request tracking', 'request status'],
+    phrasesAr: [
+      'حالة طلبي', 'متابعة طلب', 'وين طلبي', 'حالة الطلب', 'متابعة الطلب',
+      'تتبع الطلب', 'تتبع طلبي', 'طلباتي', 'متابعة طلباتي', 'وش حالة طلبي',
+      'أبغى أعرف حالة طلبي', 'وين وصل طلبي', 'track طلبي',
+    ],
+    phrasesEn: [
+      'my request status', 'track my request', 'request tracking', 'request status',
+      'application status', 'tracking', 'where is my request', 'my application',
+      'check my request',
+    ],
   },
   {
     id: 'pickup-transcript',
@@ -448,8 +636,15 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'بدء التحقق', en: 'Start verification', kind: 'verify', to: '/start-request/document-pickup?action=pick-up-transcript', variant: 'privacy', iconKind: 'shield' },
       { ar: 'رجوع',        en: 'Back',                 kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['كشف درجات', 'أبغى كشف درجات', 'استلام كشف درجات', 'الكشف الأكاديمي'],
-    phrasesEn: ['transcript', 'pick up transcript', 'request transcript', 'grade report'],
+    phrasesAr: [
+      'كشف درجات', 'أبغى كشف درجات', 'ابغى كشف درجات', 'ابي كشف درجات',
+      'استلام كشف درجات', 'الكشف الأكاديمي', 'كشف الدرجات', 'سجل أكاديمي',
+      'سجل اكاديمي', 'كشف علاماتي', 'ابغى transcript', 'transcript بليز',
+    ],
+    phrasesEn: [
+      'transcript', 'pick up transcript', 'request transcript', 'grade report',
+      'academic record', 'official transcript', 'transcript please', 'transcripts',
+    ],
   },
   {
     id: 'pickup-graduation',
@@ -465,8 +660,15 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'معرفة الخطوات', en: 'See the steps',     to: '/start-request/student-affairs?action=graduation-certificate', variant: 'secondary', iconKind: 'list' },
       { ar: 'رجوع',          en: 'Back',                kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['وثيقة تخرج', 'أبغى وثيقة تخرج', 'استلام وثيقة تخرج', 'شهادة التخرج'],
-    phrasesEn: ['graduation certificate', 'graduation document', 'pick up graduation', 'graduation'],
+    phrasesAr: [
+      'وثيقة تخرج', 'أبغى وثيقة تخرج', 'ابغى وثيقة تخرج', 'ابي وثيقة تخرج',
+      'استلام وثيقة تخرج', 'شهادة التخرج', 'وثيقة التخرج', 'شهاده التخرج',
+      'وثيقة تخرجي',
+    ],
+    phrasesEn: [
+      'graduation certificate', 'graduation document', 'pick up graduation',
+      'graduation', 'graduation paper', 'degree certificate', 'graduation cert',
+    ],
   },
   {
     id: 'enrollment-letter',
@@ -479,8 +681,14 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'بدء التحقق', en: 'Start verification', kind: 'verify', to: '/request/enrollment', variant: 'privacy', iconKind: 'shield' },
       { ar: 'رجوع',        en: 'Back',                 kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['إثبات قيد', 'إصدار إثبات قيد', 'أبغى إثبات قيد', 'خطاب تعريف'],
-    phrasesEn: ['enrollment letter', 'issue enrollment letter', 'proof of enrollment'],
+    phrasesAr: [
+      'إثبات قيد', 'اثبات قيد', 'إصدار إثبات قيد', 'أبغى إثبات قيد', 'ابغى اثبات قيد',
+      'ابي اثبات قيد', 'خطاب تعريف', 'تعريف بالطالب', 'اصدار تعريف',
+    ],
+    phrasesEn: [
+      'enrollment letter', 'issue enrollment letter', 'proof of enrollment',
+      'enrollment certificate', 'student certificate', 'enrollment proof',
+    ],
   },
   {
     id: 'update-info',
@@ -495,8 +703,16 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'بدء التحقق', en: 'Start verification', kind: 'verify', to: '/start-request/student-affairs?action=update-info', variant: 'privacy', iconKind: 'shield' },
       { ar: 'رجوع',        en: 'Back',                 kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['تحديث بياناتي', 'تعديل بياناتي', 'تحديث البيانات', 'تغيير رقم الجوال'],
-    phrasesEn: ['update my info', 'update personal information', 'change my phone', 'update info'],
+    phrasesAr: [
+      'تحديث بياناتي', 'تعديل بياناتي', 'تحديث البيانات', 'تغيير رقم الجوال',
+      'تعديل بيانات', 'تحديث رقم الجوال', 'تحديث الايميل', 'تعديل العنوان',
+      'تحديث معلوماتي', 'update بياناتي',
+    ],
+    phrasesEn: [
+      'update my info', 'update personal information', 'change my phone',
+      'update info', 'update my information', 'change my email',
+      'update phone number', 'edit my profile',
+    ],
   },
   {
     id: 'admission-status',
@@ -523,8 +739,15 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'بدء التحقق', en: 'Start verification', kind: 'verify', to: '/start-request/tech-support?action=reset-password', variant: 'privacy', iconKind: 'shield' },
       { ar: 'رجوع',        en: 'Back',                 kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['نسيت كلمة المرور', 'إعادة تعيين كلمة المرور', 'تغيير كلمة السر'],
-    phrasesEn: ['reset password', 'forgot password', 'change password'],
+    phrasesAr: [
+      'نسيت كلمة المرور', 'إعادة تعيين كلمة المرور', 'تغيير كلمة السر',
+      'كلمة المرور', 'كلمة السر', 'باسوورد', 'نسيت الباسوورد',
+      'استعادة كلمة المرور', 'reset كلمة المرور',
+    ],
+    phrasesEn: [
+      'reset password', 'forgot password', 'change password', 'password reset',
+      'recover password', 'i forgot my password', 'lost my password',
+    ],
   },
   {
     id: 'support-ticket-open',
@@ -631,8 +854,14 @@ const PRIVATE_INTENTS: IntentDef[] = [
       { ar: 'المواعيد المتاحة',   en: 'Available slots',      to: '/clinic/appointments',                                              variant: 'secondary', iconKind: 'calendar' },
       { ar: 'رجوع',                en: 'Back',                 kind: 'back',                                                            variant: 'cancel',    iconKind: 'back' },
     ],
-    phrasesAr: ['حجز موعد', 'حجز موعد طبي', 'موعد عيادة'],
-    phrasesEn: ['book appointment', 'medical appointment', 'clinic appointment'],
+    phrasesAr: [
+      'حجز موعد', 'حجز موعد طبي', 'موعد عيادة', 'احجز موعد',
+      'احجز عيادة', 'موعد دكتور', 'مراجعة طبية',
+    ],
+    phrasesEn: [
+      'book appointment', 'medical appointment', 'clinic appointment',
+      'book a doctor', 'schedule appointment', 'doctor visit',
+    ],
   },
   {
     id: 'document-pickup-private',
@@ -709,8 +938,15 @@ const RESTRICTED_INTENTS: IntentDef[] = [
     actions: verifyAndBack.map((a) =>
       a.kind === 'verify' ? { ...a, to: '/refusal' } : a,
     ),
-    phrasesAr: ['أبغى أعرف معدلي', 'معدلي', 'درجاتي', 'كم معدلي', 'معدل تراكمي'],
-    phrasesEn: ['my gpa', 'check my gpa', 'my grades', 'show my grades'],
+    phrasesAr: [
+      'أبغى أعرف معدلي', 'ابغى اعرف معدلي', 'معدلي', 'درجاتي', 'كم معدلي',
+      'معدل تراكمي', 'المعدل التراكمي', 'كم درجتي', 'علاماتي',
+      'وش معدلي', 'gpa حقي',
+    ],
+    phrasesEn: [
+      'my gpa', 'check my gpa', 'my grades', 'show my grades', 'gpa',
+      'cumulative gpa', 'my cgpa', "what's my gpa", 'whats my gpa',
+    ],
   },
   {
     id: 'medical-record',
@@ -723,8 +959,14 @@ const RESTRICTED_INTENTS: IntentDef[] = [
       { ar: 'بدء التحقق', en: 'Start verification', kind: 'verify', to: '/clinic/medical-record', variant: 'privacy', iconKind: 'shield' },
       { ar: 'رجوع',        en: 'Back',                 kind: 'back',   variant: 'cancel',  iconKind: 'back' },
     ],
-    phrasesAr: ['سجلي الطبي', 'السجل الطبي', 'بيانات صحية'],
-    phrasesEn: ['my medical record', 'medical record', 'health record'],
+    phrasesAr: [
+      'سجلي الطبي', 'السجل الطبي', 'بيانات صحية', 'الملف الطبي',
+      'ملفي الطبي', 'تقريري الطبي', 'بياناتي الطبية',
+    ],
+    phrasesEn: [
+      'my medical record', 'medical record', 'health record', 'medical history',
+      'health file', 'my health record', 'medical file',
+    ],
   },
   {
     id: 'borrowed-books',
@@ -810,11 +1052,13 @@ export const AMBIGUOUS_INTENT: IntentDef = {
  *  ═════════════════════════════════════════════════════════════════════ */
 
 export const INTENTS: IntentDef[] = [
+  GREETING_INTENT,
   ...NAV_COMMAND_INTENTS,
   ...PUBLIC_INTENTS,
   ...PRIVATE_INTENTS,
   ...HUMAN_DECISION_INTENTS,
   ...RESTRICTED_INTENTS,
+  ...CLARIFY_INTENTS,
 ];
 
 export const INTENT_BY_ID: Readonly<Record<string, IntentDef>> = Object.freeze(

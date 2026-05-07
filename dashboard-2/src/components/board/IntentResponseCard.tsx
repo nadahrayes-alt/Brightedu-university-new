@@ -10,6 +10,7 @@ import {
 import { resolveBadge, privacyReassurance } from '../../agent/agentRules';
 import { resolveActionHref } from '../../agent/agentRouter';
 import { getIntentIcon } from '../../agent/intentIcons';
+import type { Lang } from '../../agent/lang';
 import type { IntentDef } from '../../agent/intents';
 
 interface Props {
@@ -21,6 +22,10 @@ interface Props {
   /** Called when the user taps "Try again" on the ambiguous fallback. The
    *  parent page typically resets the assistant back to its ready state. */
   onRetry?: () => void;
+  /** Force the response language. The assistant must reply in the same
+   *  language the user used; the parent recogniser passes the detected reply
+   *  language here. Falls back to the UI language when not provided. */
+  replyLang?: Lang;
 }
 
 const BADGE_ICON_NODE = {
@@ -40,9 +45,12 @@ const BADGE_ICON_NODE = {
  *   • privacy reassurance strip
  *   • large action buttons grid
  */
-export function IntentResponseCard({ intent, recognizedText, onRetry }: Props) {
-  const { lang } = useApp();
+export function IntentResponseCard({ intent, recognizedText, onRetry, replyLang }: Props) {
+  const { lang: uiLang } = useApp();
   const navigate = useNavigate();
+  // Always prefer the recognised reply language; fall back to UI language so
+  // deep-link entries (where there's no utterance to detect from) still render.
+  const lang: Lang = replyLang ?? uiLang;
 
   const recognized = recognizedText
     ?? (lang === 'ar' ? intent.recognitionAr : intent.recognitionEn);
