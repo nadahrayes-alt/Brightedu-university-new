@@ -230,6 +230,10 @@ export function ServiceDetail() {
                   : a.id === 'enrollment-letter' ? '/request/enrollment'
                   : a.id === 'todays-events' ? '/events/today'
                   : a.id === 'join-a-club' ? '/clubs/directory'
+                  : a.id === 'urgent-cases' ? '/clinic/emergency'
+                  : a.id === 'general-consultation' ? '/clinic/info'
+                  : a.id === 'book-an-appointment' ? '/clinic/appointments'
+                  : a.id === 'my-medical-record' ? '/clinic/medical-record'
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;

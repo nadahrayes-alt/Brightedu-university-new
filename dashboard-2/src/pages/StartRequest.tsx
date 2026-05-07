@@ -267,6 +267,123 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
     secondaryRoute: '/rooms/availability',
   },
 
+  // Clinic — Book an appointment. Yellow-tier: appointment selection happens
+  // on the public board (anonymised slots), but tying a slot to a student and
+  // capturing any visit reason is private and lives on the phone.
+  'book-an-appointment': {
+    titleAr: 'حجز موعد طبي',
+    titleEn: 'Book a medical appointment',
+    introAr:
+      'لتأكيد حجز الموعد، تحتاج إلى التحقق من رقمك الجامعي ثم إكمال التفاصيل من جوالك بأمان.',
+    introEn:
+      'To confirm your appointment, verify your University ID and complete the details securely on your phone.',
+    stepsAr: [
+      'اختيار الموعد',
+      'تأكيد الهوية',
+      'إدخال سبب الزيارة إذا لزم',
+      'تأكيد الحجز',
+      'إشعارك بتأكيد الموعد',
+    ],
+    stepsEn: [
+      'Pick the appointment',
+      'Confirm your identity',
+      'Enter a visit reason if needed',
+      'Confirm the booking',
+      'Get a confirmation notification',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن يظهر سبب الزيارة أو أي بيانات صحية على هذه اللوحة. تفاصيل الموعد تصل إلى جوالك بعد التحقق.',
+    noticeEn:
+      'Your visit reason and any health data never appear on this board. Appointment details reach your phone after verification.',
+    badgeAr: 'يحتاج تحقق خاص',
+    badgeEn: 'Private verification required',
+    badgeSupportAr:
+      'الموعد العام يظهر على اللوحة، لكن ربطه برقمك الجامعي وأي تفاصيل طبية يتم بشكل خاص على جوالك.',
+    badgeSupportEn:
+      'The public slot is shown on the board, but tying it to your University ID and any medical details happens privately on your phone.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+    secondaryCtaAr: 'استعراض المواعيد المتاحة',
+    secondaryCtaEn: 'Browse available slots',
+    secondaryRoute: '/clinic/appointments',
+  },
+
+  // Clinic — Personal consultation. Yellow-tier: a personal consultation ties
+  // symptoms or a request to a specific student, so it must continue privately.
+  'personal-consultation': {
+    titleAr: 'استشارة شخصية',
+    titleEn: 'Personal consultation',
+    introAr:
+      'لبدء استشارة شخصية، تحتاج إلى التحقق من رقمك الجامعي ثم وصف حالتك بشكل خاص من جوالك. لا تظهر تفاصيل الاستشارة على هذه اللوحة.',
+    introEn:
+      'To start a personal consultation, verify your University ID and describe your case privately on your phone. No consultation details appear on this board.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'وصف الحالة على جوالك',
+      'إرسال الاستشارة لطاقم العيادة',
+      'استلام الرد على جوالك',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'Describe the case on your phone',
+      'Send the consultation to the clinic team',
+      'Receive the response on your phone',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لا يتم عرض الأعراض أو البيانات الصحية على اللوحة. الذكاء الاصطناعي لا يقدم تشخيصًا — الكادر الطبي يراجع الاستشارة.',
+    noticeEn:
+      'Symptoms and health data are not shown on the board. The AI assistant does not provide diagnoses — the medical team reviews the consultation.',
+    badgeAr: 'يحتاج تحقق خاص',
+    badgeEn: 'Private verification required',
+    badgeSupportAr:
+      'الاستشارات الشخصية تشمل بيانات صحية حساسة. تنتقل بشكل خاص إلى جوالك بعد التحقق من الهوية.',
+    badgeSupportEn:
+      'Personal consultations involve sensitive health data. They move privately to your phone after identity verification.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
+  // Clinic — Incident report. Yellow-tier: incident details are private and
+  // never collected on the public board. The board only initiates the channel.
+  'incident-report': {
+    titleAr: 'إبلاغ عن حادثة شخصية',
+    titleEn: 'Personal incident report',
+    introAr:
+      'لإكمال البلاغ، تحتاج إلى التحقق من رقمك الجامعي ثم وصف الحادثة من جوالك. لا تظهر تفاصيل الحادثة على هذه اللوحة.',
+    introEn:
+      'To complete the report, verify your University ID and describe the incident on your phone. Incident details never appear on this board.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'وصف الحادثة على جوالك',
+      'إرسال البلاغ لفريق الأمن والسلامة',
+      'متابعة حالة البلاغ على جوالك',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'Describe the incident on your phone',
+      'Send the report to the safety team',
+      'Track the report status on your phone',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'في حالات الطوارئ الصحية، اتصل برقم الطوارئ الجامعية مباشرة. هذا البلاغ مخصص للحوادث التي يمكن متابعتها لاحقًا.',
+    noticeEn:
+      'For medical emergencies, call the campus emergency line directly. This report is for incidents that can be reviewed afterwards.',
+    badgeAr: 'يحتاج تحقق خاص',
+    badgeEn: 'Private verification required',
+    badgeSupportAr:
+      'تفاصيل الحادثة شخصية. تنتقل إلى قناة خاصة على جوالك ولا تظهر على هذه الشاشة.',
+    badgeSupportEn:
+      'Incident details are personal. They move to a private channel on your phone and are not shown on this screen.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
   // Scenario #047 — Club Membership Request. Yellow-tier: AI prepares the
   // request, club coordinator reviews and approves. Public board exposes a
   // green-tier club directory; this screen explains the private path.

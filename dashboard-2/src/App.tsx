@@ -23,6 +23,10 @@ import { Refusal } from './pages/Refusal';
 import { RoomAvailability } from './pages/RoomAvailability';
 import { TodaysEvents } from './pages/TodaysEvents';
 import { ClubDirectory } from './pages/ClubDirectory';
+import { EmergencyInfo } from './pages/EmergencyInfo';
+import { ClinicInfo } from './pages/ClinicInfo';
+import { AppointmentSlots } from './pages/AppointmentSlots';
+import { MedicalRecordPrivate } from './pages/MedicalRecordPrivate';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -106,6 +110,18 @@ export default function App() {
 
           {/* Public-safe student-club directory (Scenario #047 — parallel to "Join a club"). */}
           <Route path="/clubs/directory" element={<ClubDirectory />} />
+
+          {/* Clinic — public emergency info card (Scenario #066 — Emergency Information Card). */}
+          <Route path="/clinic/emergency" element={<EmergencyInfo />} />
+
+          {/* Clinic — public general consultation / clinic info. */}
+          <Route path="/clinic/info" element={<ClinicInfo />} />
+
+          {/* Clinic — public anonymised appointment slots; booking gates behind ID + QR. */}
+          <Route path="/clinic/appointments" element={<AppointmentSlots />} />
+
+          {/* Clinic — calm privacy gate for personal medical records (black-tier). */}
+          <Route path="/clinic/medical-record" element={<MedicalRecordPrivate />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />
