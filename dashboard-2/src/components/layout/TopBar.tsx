@@ -1,4 +1,4 @@
-import { Languages, Lock } from 'lucide-react';
+import { Languages, Lock, Sun, Moon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useApp } from '../../lib/AppContext';
 
@@ -17,7 +17,7 @@ function useNow() {
  * portrait wall-mounted kiosk (the language toggle is ≥ 80×80).
  */
 export function TopBar() {
-  const { lang, toggleLang, privateMode } = useApp();
+  const { lang, toggleLang, privateMode, theme, toggleTheme } = useApp();
   const now = useNow();
   const locale = lang === 'ar' ? 'ar-SA' : 'en-US';
   const time = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -53,6 +53,20 @@ export function TopBar() {
         <div className="text-2xl font-bold text-ink num leading-none">{time}</div>
         <div className="text-xs text-ink-muted mt-1">{date}</div>
       </div>
+
+      {/* Theme toggle — kiosk control (≥ 80×80) */}
+      <button
+        onClick={toggleTheme}
+        className="min-w-[80px] min-h-[80px] h-20 px-4 rounded-2xl bg-surface-2 hover:bg-border-soft active:scale-[0.98] text-ink-muted flex flex-col items-center justify-center gap-1 transition focus:outline-none focus:shadow-focus"
+        aria-label={theme === 'light' ? (lang === 'ar' ? 'الوضع الليلي' : 'Dark mode') : (lang === 'ar' ? 'الوضع الفاتح' : 'Light mode')}
+      >
+        {theme === 'light' ? <Moon className="w-7 h-7" /> : <Sun className="w-7 h-7" />}
+        <span className="text-sm font-semibold">
+          {theme === 'light'
+            ? (lang === 'ar' ? 'ليلي' : 'Dark')
+            : (lang === 'ar' ? 'فاتح' : 'Light')}
+        </span>
+      </button>
 
       {/* Language toggle — prominent kiosk control (≥ 80×80) */}
       <button
