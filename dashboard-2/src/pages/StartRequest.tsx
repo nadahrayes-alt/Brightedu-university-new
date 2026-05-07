@@ -267,6 +267,120 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
     secondaryRoute: '/rooms/availability',
   },
 
+  // Tech Support — Reset password. Account-related, must continue privately.
+  'reset-password': {
+    titleAr: 'إعادة تعيين كلمة المرور',
+    titleEn: 'Reset password',
+    introAr:
+      'لإعادة تعيين كلمة المرور، تحتاج إلى التحقق من رقمك الجامعي ثم إكمال الخطوات من جوالك بأمان.',
+    introEn:
+      'To reset your password, verify your University ID and complete the steps securely on your phone.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'إثبات ملكية الحساب',
+      'إعادة تعيين كلمة المرور على جوالك',
+      'إشعارك عند نجاح العملية',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'Verify account ownership',
+      'Reset the password on your phone',
+      'Get a notification when the change succeeds',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لا يتم عرض كلمة المرور أو أي تفاصيل من حسابك على هذه الشاشة. الذكاء الاصطناعي لا يغيّر كلمة المرور — العملية تتم على جوالك.',
+    noticeEn:
+      'Your password and account details never appear on this screen. The AI assistant does not change the password — the change happens on your phone.',
+    badgeAr: 'يحتاج تحقق خاص',
+    badgeEn: 'Private verification required',
+    badgeSupportAr:
+      'إعادة تعيين كلمة المرور إجراء على حسابك. تتم بأمان على جوالك بعد التحقق من الهوية.',
+    badgeSupportEn:
+      'Resetting a password is an account action. It happens privately on your phone after identity verification.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
+  // Tech Support — Open a new support ticket. Routed from troubleshooting
+  // pages. Personal device or account details belong on the phone, not the board.
+  'support-ticket': {
+    titleAr: 'فتح تذكرة دعم فني',
+    titleEn: 'Open a support ticket',
+    introAr:
+      'لفتح تذكرة دعم، أدخل رقمك الجامعي ثم أكمل وصف المشكلة وتفاصيل جهازك من جوالك بأمان.',
+    introEn:
+      'To open a support ticket, enter your University ID and describe the issue and device details privately on your phone.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'وصف المشكلة على جوالك',
+      'إرفاق صور أو معلومات الجهاز إن وجدت',
+      'إرسال التذكرة لفريق الدعم',
+      'متابعة حالة التذكرة على جوالك',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'Describe the issue on your phone',
+      'Attach screenshots or device info if any',
+      'Send the ticket to the support team',
+      'Track the ticket status on your phone',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن يظهر رقم التذكرة أو وصف المشكلة أو تفاصيل الجهاز على هذه اللوحة. الذكاء الاصطناعي يجهّز التذكرة، وفريق الدعم يردّ عليك خلال ساعات العمل.',
+    noticeEn:
+      'Ticket number, issue description, and device details never appear on this board. The AI assistant prepares the ticket and the support team replies during working hours.',
+    badgeAr: 'يحتاج تحقق خاص',
+    badgeEn: 'Private verification required',
+    badgeSupportAr:
+      'وصف المشكلة وتفاصيل الجهاز شخصية. يتم إرسالها بشكل خاص من جوالك إلى فريق الدعم.',
+    badgeSupportEn:
+      'Issue descriptions and device details are personal. They are sent privately from your phone to the support team.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
+  // Tech Support — My support tickets (tracking own tickets). Phone-only:
+  // ticket numbers, statuses, and notes are personal and never on the board.
+  'my-support-tickets': {
+    titleAr: 'تذاكر الدعم الفنية',
+    titleEn: 'My support tickets',
+    introAr:
+      'لفتح أو متابعة تذكرة دعم فنية، أدخل رقمك الجامعي ثم أكمل من جوالك بأمان.',
+    introEn:
+      'To open or follow up on a support ticket, enter your University ID and continue privately on your phone.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'عرض تذاكرك على جوالك',
+      'متابعة الردود وإضافة تفاصيل إن لزم',
+      'استلام إشعارات التحديث',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'View your tickets on your phone',
+      'Follow replies and add details if needed',
+      'Receive update notifications',
+    ],
+    stepsTitleAr: 'ما الذي ستراه على جوالك؟',
+    stepsTitleEn: 'What will you see on your phone?',
+    noticeAr:
+      'لن تظهر أرقام التذاكر أو حالتها أو تفاصيل الجهاز أو ردود الفريق على هذه اللوحة. كل التحديثات تصل إليك على جوالك بعد التحقق.',
+    noticeEn:
+      'Ticket numbers, statuses, device details, and team replies never appear on this board. All updates reach you on your phone after verification.',
+    badgeAr: 'خاص — جوال',
+    badgeEn: 'Private — phone',
+    badgeTone: 'black-tier',
+    badgeIconKind: 'lock',
+    badgeSupportAr:
+      'تذاكر الدعم تكشف بيانات حسابك وجهازك. تظهر فقط على جوالك بعد التحقق من الهوية.',
+    badgeSupportEn:
+      'Support tickets expose account and device data. They appear only on your phone after identity verification.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
   // Clinic — Book an appointment. Yellow-tier: appointment selection happens
   // on the public board (anonymised slots), but tying a slot to a student and
   // capturing any visit reason is private and lives on the phone.

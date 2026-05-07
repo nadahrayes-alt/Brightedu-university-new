@@ -234,6 +234,9 @@ export function ServiceDetail() {
                   : a.id === 'general-consultation' ? '/clinic/info'
                   : a.id === 'book-an-appointment' ? '/clinic/appointments'
                   : a.id === 'my-medical-record' ? '/clinic/medical-record'
+                  : a.id === 'sso-login-issues' ? '/tech/sso'
+                  : a.id === 'wi-fi-issue' ? '/tech/wifi'
+                  : a.id === 'my-support-tickets' ? `/start-request/${service.id}?action=${a.id}`
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;

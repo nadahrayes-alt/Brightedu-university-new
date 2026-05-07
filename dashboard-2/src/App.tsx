@@ -27,6 +27,8 @@ import { EmergencyInfo } from './pages/EmergencyInfo';
 import { ClinicInfo } from './pages/ClinicInfo';
 import { AppointmentSlots } from './pages/AppointmentSlots';
 import { MedicalRecordPrivate } from './pages/MedicalRecordPrivate';
+import { SsoTroubleshooting } from './pages/SsoTroubleshooting';
+import { WifiTroubleshooting } from './pages/WifiTroubleshooting';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -122,6 +124,12 @@ export default function App() {
 
           {/* Clinic — calm privacy gate for personal medical records (black-tier). */}
           <Route path="/clinic/medical-record" element={<MedicalRecordPrivate />} />
+
+          {/* Tech Support — public SSO login troubleshooting (green-tier). */}
+          <Route path="/tech/sso" element={<SsoTroubleshooting />} />
+
+          {/* Tech Support — public Wi-Fi troubleshooting (green-tier). */}
+          <Route path="/tech/wifi" element={<WifiTroubleshooting />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />
