@@ -103,20 +103,35 @@ export function Welcome() {
       </div>
 
       <div className="relative px-6 py-8 sm:px-10 sm:py-12">
-        {/* Hero */}
-        <section className="mb-8">
-          <div className="inline-flex items-center gap-2 px-4 h-10 rounded-full bg-primary/15 text-primary text-base font-semibold mb-5">
-            <Sparkles className="w-5 h-5" />
-            {lang === 'ar' ? 'لوحة الحرم الذكية' : 'Smart Campus Board'}
+        {/* Hero — text on one side, mascot on the other (lg+).
+          * On portrait/small screens the mascot floats above the text. */}
+        <section className="mb-8 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 lg:gap-10 items-center">
+          <div className="order-2 lg:order-1">
+            <div className="inline-flex items-center gap-2 px-4 h-10 rounded-full bg-primary/15 text-primary text-base font-semibold mb-5">
+              <Sparkles className="w-5 h-5" />
+              {lang === 'ar' ? 'لوحة الحرم الذكية' : 'Smart Campus Board'}
+            </div>
+            <h1 className="text-5xl sm:text-6xl font-bold text-ink leading-[1.05]">
+              {lang === 'ar' ? 'كيف أقدر أساعدك؟' : 'How can I help?'}
+            </h1>
+            <p className="mt-4 text-2xl text-ink-muted leading-snug max-w-2xl">
+              {lang === 'ar'
+                ? 'اضغط على المساعد للسؤال بالصوت، أو اختر إجراءً سريعًا.'
+                : 'Tap the assistant to ask by voice, or pick a quick action below.'}
+            </p>
           </div>
-          <h1 className="text-5xl sm:text-6xl font-bold text-ink leading-[1.05]">
-            {lang === 'ar' ? 'كيف أقدر أساعدك؟' : 'How can I help?'}
-          </h1>
-          <p className="mt-4 text-2xl text-ink-muted leading-snug max-w-2xl">
-            {lang === 'ar'
-              ? 'اضغط على المساعد للسؤال بالصوت، أو اختر إجراءً سريعًا.'
-              : 'Tap the assistant to ask by voice, or pick a quick action below.'}
-          </p>
+
+          {/* Mascot — friendly greeter sitting next to the headline */}
+          <div className="order-1 lg:order-2 relative shrink-0 mx-auto lg:mx-0">
+            {/* Soft glow halo behind the mascot */}
+            <div className="pointer-events-none absolute inset-0 -m-6 rounded-full bg-primary/20 dark:bg-primary/30 blur-3xl animate-glow-soft" />
+            <img
+              src="/mascot.png"
+              alt={lang === 'ar' ? 'مساعد الحرم الذكي' : 'Smart Campus assistant mascot'}
+              className="relative w-44 sm:w-52 lg:w-64 h-auto select-none animate-fade-in drop-shadow-[0_20px_30px_rgba(47,91,255,0.25)]"
+              draggable={false}
+            />
+          </div>
         </section>
 
         {/* Live KPI strip — keeps the kiosk feeling alive */}
