@@ -273,38 +273,39 @@ const TONES: Record<string, { ring: string; bg: string; text: string }> = {
  * background-image cropped to show only the head/upper-body inside the circle.
  */
 const AVATAR_SIZES = {
-  sm: 'w-16 h-16',
-  md: 'w-24 h-24 sm:w-28 sm:h-28',
-  lg: 'w-20 h-20 sm:w-24 sm:h-24',
+  sm: 'w-12 h-12',
+  md: 'w-16 h-16 sm:w-20 sm:h-20',
+  lg: 'w-14 h-14 sm:w-16 sm:h-16',
 } as const;
 
 const AVATAR_DOT = {
-  sm: 'w-3.5 h-3.5',
-  md: 'w-5 h-5',
-  lg: 'w-4 h-4',
+  sm: 'w-3 h-3',
+  md: 'w-4 h-4',
+  lg: 'w-3.5 h-3.5',
 } as const;
 
 function MascotAvatar({ size = 'md' }: { size?: keyof typeof AVATAR_SIZES }) {
   return (
     <div className="relative shrink-0">
       {/* Soft halo behind avatar */}
-      <div className="pointer-events-none absolute inset-0 -m-2 rounded-full bg-primary/30 dark:bg-primary/40 blur-xl animate-glow-soft" />
+      <div className="pointer-events-none absolute inset-0 -m-1.5 rounded-full bg-primary/30 dark:bg-primary/40 blur-lg animate-glow-soft" />
 
-      {/* Avatar disc — head/upper-body crop of the mascot */}
+      {/* Avatar disc — head/upper-body crop of the mascot on a dark surface
+        * (mimics the assistant's screen-style face on a dark device). */}
       <div
-        className={`relative ${AVATAR_SIZES[size]} rounded-full bg-gradient-to-br from-primary/20 to-privacy/20 dark:from-primary/30 dark:to-privacy/30 ring-4 ring-surface dark:ring-surface shadow-[0_12px_30px_-8px_rgba(47,91,255,0.45)] animate-mascot-float`}
+        className={`relative ${AVATAR_SIZES[size]} rounded-full bg-gradient-to-br from-sidebar to-[#1a2541] ring-2 ring-primary/50 dark:ring-primary/60 shadow-[0_10px_24px_-8px_rgba(47,91,255,0.55)] animate-mascot-float`}
         style={{
-          backgroundImage: 'url(/mascot.png)',
-          backgroundSize: '180% auto',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat',
+          backgroundImage: 'url(/mascot.png), linear-gradient(135deg, #0B1220, #1a2541)',
+          backgroundSize: '180% auto, 100% 100%',
+          backgroundPosition: 'center top, center',
+          backgroundRepeat: 'no-repeat, no-repeat',
         }}
         role="img"
         aria-label="Campus assistant mascot"
       />
 
       {/* Live "online" indicator */}
-      <span className={`absolute bottom-0 end-0 ${AVATAR_DOT[size]} rounded-full bg-success ring-4 ring-surface dark:ring-surface`}>
+      <span className={`absolute bottom-0 end-0 ${AVATAR_DOT[size]} rounded-full bg-success ring-2 ring-surface dark:ring-surface`}>
         <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-75" />
       </span>
     </div>
