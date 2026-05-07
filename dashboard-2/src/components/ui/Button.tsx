@@ -21,11 +21,12 @@ const variants: Record<Variant, string> = {
   ghost:     'bg-transparent text-ink hover:bg-surface-2',
 };
 
-// Touch-grade per spec: lg=72×min240, md=64×min200, sm=56×min160
+// Kiosk touch-grade: every Button meets the ≥ 80×80 spec.
+// sm=80×min180, md=88×min220, lg=96×min260
 const sizes: Record<Size, string> = {
-  sm: 'h-14 min-w-[160px] px-6 text-lg',
-  md: 'h-16 min-w-[200px] px-7 text-xl',
-  lg: 'h-[72px] min-w-[240px] px-8 text-[22px]',
+  sm: 'h-20 min-w-[180px] px-6 text-lg',
+  md: 'h-[88px] min-w-[220px] px-7 text-xl',
+  lg: 'h-24 min-w-[260px] px-8 text-[22px]',
 };
 
 export function Button({
