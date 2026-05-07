@@ -306,6 +306,41 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
     secondaryRoute: '/rooms/availability',
   },
 
+  // Admissions — My admission status. Personal application data lives on the
+  // phone only; the public board never displays admission results.
+  'my-admission-status': {
+    titleAr: 'حالة قبولي',
+    titleEn: 'My admission status',
+    introAr:
+      'لمتابعة حالة قبولك، أدخل رقمك الجامعي ثم أكمل من جوالك بأمان. لن يتم عرض نتيجة القبول على هذه الشاشة.',
+    introEn:
+      'To track your admission status, enter your University ID and continue privately on your phone. The admission result is never shown on this screen.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'عرض حالة طلبك على جوالك',
+      'متابعة الخطوات التالية أو الإشعارات',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'View your application status on your phone',
+      'Follow the next steps or notifications',
+    ],
+    stepsTitleAr: 'ما الذي ستراه على جوالك؟',
+    stepsTitleEn: 'What will you see on your phone?',
+    noticeAr:
+      'لن تظهر نتيجة القبول أو رقم الطلب أو اسم الطالب أو سبب القبول/الرفض على هذه اللوحة. كل التحديثات تصلك على جوالك بعد التحقق.',
+    noticeEn:
+      'The admission result, application ID, student name, and acceptance/rejection reason never appear on this board. Updates reach you on your phone after verification.',
+    badgeAr: 'يحتاج تحقق آمن',
+    badgeEn: 'Secure verification required',
+    badgeSupportAr:
+      'حالة القبول بيانات شخصية، فالاطلاع عليها يتم من جوالك بعد التحقق. اللوحة العامة هنا تُمهّد للقناة الخاصة فقط.',
+    badgeSupportEn:
+      'Admission status is personal, so it is viewed from your phone after verification. This public board only initiates the private channel.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
   // Library — Borrow a book. Account-tied, continues privately on the phone.
   'borrow-a-book': {
     titleAr: 'إعارة كتاب',

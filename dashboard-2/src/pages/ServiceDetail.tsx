@@ -130,8 +130,8 @@ export function ServiceDetail() {
               ? 'هذه الصفحة تعرض موقع نقطة الاستلام وساعات العمل والازدحام التقديري فقط، ولا تعرض بيانات شخصية.'
               : 'This page only shows the pickup point location, working hours, and estimated congestion — no personal data is shown.')
             : (lang === 'ar'
-              ? 'هذه الصفحة عامة. تعرض موقع الخدمة وساعات العمل والازدحام التقديري فقط، ولا تطلب الرقم الجامعي.'
-              : 'This page is public. It only shows location, working hours, and estimated congestion — no University ID is required.')}
+              ? 'هذه الصفحة تعرض موقع الخدمة وساعات العمل والازدحام التقديري فقط، ولا تتطلب الرقم الجامعي.'
+              : 'This page only shows location, working hours, and estimated congestion — no University ID is required.')}
         </p>
       </div>
 
@@ -224,22 +224,29 @@ export function ServiceDetail() {
                   : a.tier === 'green' ? 'public-safe'
                   : a.tier === 'yellow' ? 'needs-qr'
                   : 'black-tier';
-                // Document-pickup actions read as transcripts, certificates,
-                // or request statuses — all academic-grade data. Use the
-                // stronger "secure verification" wording here so the badge
+                // Actions whose data is academic-grade (transcripts,
+                // certificates, request status, admission status) get the
+                // stronger "secure verification" wording so the badge
                 // signals identity gating rather than just "phone needed".
-                const isSecureVerifyDoc =
-                  service.id === 'document-pickup' && a.tier === 'yellow';
+                const SECURE_VERIFY_ACTIONS = new Set([
+                  'pick-up-graduation-certificate',
+                  'pick-up-transcript',
+                  'my-request-status',
+                  'my-admission-status',
+                ]);
+                const isSecureVerify =
+                  (service.id === 'document-pickup' && a.tier === 'yellow') ||
+                  SECURE_VERIFY_ACTIONS.has(a.id);
                 const tierLabel =
                   lang === 'ar'
                     ? isHumanDecision ? 'قرار بشري مطلوب'
                     : a.tier === 'green' ? 'عام وآمن'
-                    : a.tier === 'yellow' ? (isSecureVerifyDoc ? 'يحتاج تحقق آمن' : 'يحتاج جوال')
-                    : 'خاص — جوال'
+                    : a.tier === 'yellow' ? (isSecureVerify ? 'يحتاج تحقق آمن' : 'يحتاج جوال')
+                    : (isSecureVerify ? 'يحتاج تحقق آمن' : 'خاص — جوال')
                     : isHumanDecision ? 'Human decision required'
                     : a.tier === 'green' ? 'Public-safe'
-                    : a.tier === 'yellow' ? (isSecureVerifyDoc ? 'Secure verification required' : 'Phone needed')
-                    : 'Phone only';
+                    : a.tier === 'yellow' ? (isSecureVerify ? 'Secure verification required' : 'Phone needed')
+                    : (isSecureVerify ? 'Secure verification required' : 'Phone only');
                 const target =
                   a.id === 'graduation-certificate' ? '/request/graduation'
                   : a.id === 'enrollment-letter' ? '/request/enrollment'
@@ -257,6 +264,8 @@ export function ServiceDetail() {
                   : a.id === 'search-the-catalog' ? '/library/catalog'
                   : a.id === 'reserve-a-study-room' ? '/library/study-rooms'
                   : a.id === 'my-borrowed-books' ? `/start-request/${service.id}?action=${a.id}`
+                  : a.id === 'admission-inquiry' ? '/admissions/inquiry'
+                  : a.id === 'my-admission-status' ? `/start-request/${service.id}?action=${a.id}`
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;

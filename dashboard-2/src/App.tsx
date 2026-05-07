@@ -33,6 +33,7 @@ import { CafeteriaMenu } from './pages/CafeteriaMenu';
 import { CafeteriaOffers } from './pages/CafeteriaOffers';
 import { LibraryCatalog } from './pages/LibraryCatalog';
 import { StudyRoomAvailability } from './pages/StudyRoomAvailability';
+import { AdmissionInquiry } from './pages/AdmissionInquiry';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -146,6 +147,9 @@ export default function App() {
 
           {/* Library — public study-room availability; booking gates behind ID + QR. */}
           <Route path="/library/study-rooms" element={<StudyRoomAvailability />} />
+
+          {/* Admissions — public general admissions inquiry (Scenarios #063 + #058). */}
+          <Route path="/admissions/inquiry" element={<AdmissionInquiry />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />
