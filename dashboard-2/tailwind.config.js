@@ -67,10 +67,41 @@ export default {
           from: { opacity: '0', transform: 'scale(0.96)' },
           to:   { opacity: '1', transform: 'scale(1)' },
         },
+        slowSpin: {
+          from: { transform: 'rotate(0deg)' },
+          to:   { transform: 'rotate(360deg)' },
+        },
+        slowSpinReverse: {
+          from: { transform: 'rotate(0deg)' },
+          to:   { transform: 'rotate(-360deg)' },
+        },
+        softGlow: {
+          '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+          '50%':      { opacity: '0.85', transform: 'scale(1.04)' },
+        },
+        arrowFloat: {
+          '0%, 100%': { transform: 'translateY(0)', opacity: '0.35' },
+          '50%':      { transform: 'translateY(-6px)', opacity: '1' },
+        },
+        gradientShift: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%':      { backgroundPosition: '100% 50%' },
+        },
+        kenBurns: {
+          '0%':   { transform: 'scale(1) translate3d(0, 0, 0)' },
+          '50%':  { transform: 'scale(1.08) translate3d(-1.5%, -1%, 0)' },
+          '100%': { transform: 'scale(1) translate3d(0, 0, 0)' },
+        },
       },
       animation: {
-        'fade-in':  'fadeIn 240ms cubic-bezier(0,0,0,1) both',
-        'scale-in': 'scaleIn 240ms cubic-bezier(0,0,0,1) both',
+        'fade-in':           'fadeIn 240ms cubic-bezier(0,0,0,1) both',
+        'scale-in':          'scaleIn 240ms cubic-bezier(0,0,0,1) both',
+        'spin-slow':         'slowSpin 40s linear infinite',
+        'spin-slow-reverse': 'slowSpinReverse 60s linear infinite',
+        'glow-soft':         'softGlow 5s ease-in-out infinite',
+        'arrow-float':       'arrowFloat 2.4s ease-in-out infinite',
+        'gradient-shift':    'gradientShift 14s ease-in-out infinite',
+        'ken-burns':         'kenBurns 28s ease-in-out infinite',
       },
     },
   },
