@@ -31,6 +31,8 @@ import { SsoTroubleshooting } from './pages/SsoTroubleshooting';
 import { WifiTroubleshooting } from './pages/WifiTroubleshooting';
 import { CafeteriaMenu } from './pages/CafeteriaMenu';
 import { CafeteriaOffers } from './pages/CafeteriaOffers';
+import { LibraryCatalog } from './pages/LibraryCatalog';
+import { StudyRoomAvailability } from './pages/StudyRoomAvailability';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -138,6 +140,12 @@ export default function App() {
 
           {/* Cafeteria — active public offers (green-tier). */}
           <Route path="/cafeteria/offers" element={<CafeteriaOffers />} />
+
+          {/* Library — public catalog search (green-tier). */}
+          <Route path="/library/catalog" element={<LibraryCatalog />} />
+
+          {/* Library — public study-room availability; booking gates behind ID + QR. */}
+          <Route path="/library/study-rooms" element={<StudyRoomAvailability />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />

@@ -267,6 +267,123 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
     secondaryRoute: '/rooms/availability',
   },
 
+  // Library — Borrow a book. Account-tied, continues privately on the phone.
+  'borrow-a-book': {
+    titleAr: 'إعارة كتاب',
+    titleEn: 'Borrow a book',
+    introAr:
+      'لإكمال طلب إعارة كتاب، تحتاج إلى التحقق من رقمك الجامعي ثم المتابعة من جوالك بأمان.',
+    introEn:
+      'To complete a book-borrow request, verify your University ID and continue privately on your phone.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'اختيار الكتاب',
+      'تأكيد الإعارة',
+      'عرض تعليمات الاستلام أو الإرجاع على جوالك',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'Pick the book',
+      'Confirm the loan',
+      'View pickup or return instructions on your phone',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن يظهر اسمك أو حسابك في المكتبة أو تاريخ إعارتك أو الغرامات على هذه الشاشة. الإعارة تُسجَّل بعد التحقق من الهوية على جوالك.',
+    noticeEn:
+      'Your name, library account, borrowing history, and fines never appear on this screen. The loan is recorded after identity verification on your phone.',
+    badgeAr: 'يحتاج جوال',
+    badgeEn: 'Phone needed',
+    badgeSupportAr:
+      'الإعارة مرتبطة بحسابك في المكتبة. يتم إكمالها بشكل خاص على جوالك بعد التحقق من الهوية.',
+    badgeSupportEn:
+      'Borrowing is tied to your library account. It is completed privately on your phone after identity verification.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+    secondaryCtaAr: 'البحث في الفهرس',
+    secondaryCtaEn: 'Search the catalog',
+    secondaryRoute: '/library/catalog',
+  },
+
+  // Library — Reserve a study room. Public availability is shown on the board,
+  // but tying a room to a student requires private continuation.
+  'reserve-a-study-room': {
+    titleAr: 'حجز قاعة دراسية',
+    titleEn: 'Reserve a study room',
+    introAr:
+      'لحجز القاعة باسمك، أدخل رقمك الجامعي ثم أكمل الحجز من جوالك.',
+    introEn:
+      'To reserve the room in your name, enter your University ID and complete the booking on your phone.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'اختيار وقت الحجز',
+      'تأكيد الحجز على جوالك',
+      'استلام تأكيد الحجز',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'Pick the booking time',
+      'Confirm the booking on your phone',
+      'Receive booking confirmation',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن يتم تأكيد الحجز على هذه اللوحة. تُسجَّل القاعة باسمك فقط بعد التحقق من الهوية على جوالك.',
+    noticeEn:
+      'The booking is not confirmed on this board. The room is recorded under your name only after identity verification on your phone.',
+    badgeAr: 'يحتاج جوال',
+    badgeEn: 'Phone needed',
+    badgeSupportAr:
+      'توفّر القاعة معلومة عامة، لكن ربط القاعة برقمك الجامعي يتم بشكل خاص على جوالك.',
+    badgeSupportEn:
+      'Room availability is public; tying the room to your University ID happens privately on your phone.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+    secondaryCtaAr: 'استعراض القاعات المتاحة',
+    secondaryCtaEn: 'Browse available rooms',
+    secondaryRoute: '/library/study-rooms',
+  },
+
+  // Library — My borrowed books. Personal account data; phone-only output.
+  'my-borrowed-books': {
+    titleAr: 'كتبي المعارة',
+    titleEn: 'My borrowed books',
+    introAr:
+      'لا يمكن عرض كتبك المعارة على شاشة عامة. أدخل رقمك الجامعي ثم أكمل من جوالك بأمان.',
+    introEn:
+      'Your borrowed books cannot be shown on a public screen. Enter your University ID and continue privately on your phone.',
+    stepsAr: [
+      'تأكيد الهوية',
+      'عرض الكتب المعارة وتواريخ الإرجاع على جوالك',
+      'تجديد الإعارة إذا لزم',
+      'استعراض الغرامات إن وجدت',
+    ],
+    stepsEn: [
+      'Confirm your identity',
+      'View borrowed books and return dates on your phone',
+      'Renew loans if needed',
+      'Review any fines',
+    ],
+    stepsTitleAr: 'ما الذي ستراه على جوالك؟',
+    stepsTitleEn: 'What will you see on your phone?',
+    noticeAr:
+      'لن تظهر قائمة كتبك أو تواريخ الإرجاع أو الغرامات أو حالة التجديد على هذه اللوحة. كل التفاصيل تصل إليك على جوالك بعد التحقق.',
+    noticeEn:
+      'Your books, return dates, fines, and renewal status never appear on this board. All details reach you on your phone after verification.',
+    badgeAr: 'خاص — جوال',
+    badgeEn: 'Private — phone',
+    badgeTone: 'black-tier',
+    badgeIconKind: 'lock',
+    badgeSupportAr:
+      'الكتب المعارة بيانات حسابك في المكتبة. تظهر فقط على جوالك بعد التحقق من الهوية.',
+    badgeSupportEn:
+      'Borrowed books are part of your library account. They appear only on your phone after identity verification.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
   // Tech Support — Reset password. Account-related, must continue privately.
   'reset-password': {
     titleAr: 'إعادة تعيين كلمة المرور',

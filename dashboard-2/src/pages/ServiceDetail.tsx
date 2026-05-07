@@ -239,6 +239,9 @@ export function ServiceDetail() {
                   : a.id === 'my-support-tickets' ? `/start-request/${service.id}?action=${a.id}`
                   : a.id === 'todays-menu' ? '/cafeteria/menu'
                   : a.id === 'active-offers' ? '/cafeteria/offers'
+                  : a.id === 'search-the-catalog' ? '/library/catalog'
+                  : a.id === 'reserve-a-study-room' ? '/library/study-rooms'
+                  : a.id === 'my-borrowed-books' ? `/start-request/${service.id}?action=${a.id}`
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;
