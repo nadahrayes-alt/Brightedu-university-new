@@ -120,13 +120,18 @@ export function ServiceDetail() {
         </Chip>
       </header>
 
-      {/* Public-safe helper note */}
+      {/* Public-safe helper note (service-aware copy for document-pickup
+        * which is a public pickup-point info layer per Scenario #064/#022). */}
       <div className="flex items-start gap-3 px-5 py-4 rounded-2xl bg-success-soft/60 dark:bg-success/10 border border-success/20">
         <Info className="w-5 h-5 text-success shrink-0 mt-0.5" />
         <p className="text-base text-ink leading-relaxed">
-          {lang === 'ar'
-            ? 'هذه الصفحة عامة. تعرض موقع الخدمة وساعات العمل والازدحام التقديري فقط، ولا تطلب الرقم الجامعي.'
-            : 'This page is public. It only shows location, working hours, and estimated congestion — no University ID is required.'}
+          {service.id === 'document-pickup'
+            ? (lang === 'ar'
+              ? 'هذه الصفحة تعرض موقع نقطة الاستلام وساعات العمل والازدحام التقديري فقط، ولا تعرض بيانات شخصية.'
+              : 'This page only shows the pickup point location, working hours, and estimated congestion — no personal data is shown.')
+            : (lang === 'ar'
+              ? 'هذه الصفحة عامة. تعرض موقع الخدمة وساعات العمل والازدحام التقديري فقط، ولا تطلب الرقم الجامعي.'
+              : 'This page is public. It only shows location, working hours, and estimated congestion — no University ID is required.')}
         </p>
       </div>
 
@@ -219,12 +224,22 @@ export function ServiceDetail() {
                   : a.tier === 'green' ? 'public-safe'
                   : a.tier === 'yellow' ? 'needs-qr'
                   : 'black-tier';
+                // Document-pickup actions read as transcripts, certificates,
+                // or request statuses — all academic-grade data. Use the
+                // stronger "secure verification" wording here so the badge
+                // signals identity gating rather than just "phone needed".
+                const isSecureVerifyDoc =
+                  service.id === 'document-pickup' && a.tier === 'yellow';
                 const tierLabel =
                   lang === 'ar'
                     ? isHumanDecision ? 'قرار بشري مطلوب'
-                    : a.tier === 'green' ? 'عام وآمن' : a.tier === 'yellow' ? 'يحتاج جوال' : 'خاص — جوال'
+                    : a.tier === 'green' ? 'عام وآمن'
+                    : a.tier === 'yellow' ? (isSecureVerifyDoc ? 'يحتاج تحقق آمن' : 'يحتاج جوال')
+                    : 'خاص — جوال'
                     : isHumanDecision ? 'Human decision required'
-                    : a.tier === 'green' ? 'Public-safe' : a.tier === 'yellow' ? 'Phone needed' : 'Phone only';
+                    : a.tier === 'green' ? 'Public-safe'
+                    : a.tier === 'yellow' ? (isSecureVerifyDoc ? 'Secure verification required' : 'Phone needed')
+                    : 'Phone only';
                 const target =
                   a.id === 'graduation-certificate' ? '/request/graduation'
                   : a.id === 'enrollment-letter' ? '/request/enrollment'

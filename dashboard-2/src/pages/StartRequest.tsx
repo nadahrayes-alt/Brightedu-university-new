@@ -135,8 +135,8 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
       'لن تظهر تفاصيل الطلب أو رقمه أو اسم الطالب أو أسباب التأخير أو المرفقات أو القرارات على هذه اللوحة. كل تحديثات الطلب تصلك على جوالك بعد التحقق.',
     noticeEn:
       'Request details, request ID, student name, delay reasons, attachments, and decisions will never appear on this board. All updates reach you on your phone after verification.',
-    badgeAr: 'يحتاج تحقق خاص',
-    badgeEn: 'Private verification required',
+    badgeAr: 'يحتاج تحقق آمن',
+    badgeEn: 'Secure verification required',
     badgeSupportAr:
       'متابعة الطلب تكشف بيانات شخصية، فالاطلاع عليها يتم من جوالك بعد التحقق. اللوحة العامة هنا تُمهّد للقناة الخاصة فقط.',
     badgeSupportEn:
@@ -173,12 +173,51 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
       'إذا لم تكن الوثيقة جاهزة بعد، سيتم إشعارك على جوالك عند جاهزيتها. لن يظهر اسم الطالب أو حالة التخرج أو محتوى الوثيقة على اللوحة العامة.',
     noticeEn:
       'If the document is not ready yet, you will be notified on your phone when it is. Student name, graduation status, and document content never appear on the public board.',
-    badgeAr: 'يحتاج تحقق خاص',
-    badgeEn: 'Private verification required',
+    badgeAr: 'يحتاج تحقق آمن',
+    badgeEn: 'Secure verification required',
     badgeSupportAr:
       'رمز الاستلام وتفاصيل الوثيقة بيانات شخصية. يتم عرضها فقط على جوالك بعد التحقق، ثم تتوجه لنقطة الاستلام العامة.',
     badgeSupportEn:
       'The pickup code and document details are personal. They appear only on your phone after verification; you then proceed to the public pickup point.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
+  // Scenario #001 — Instant Official Transcript Request (with #002 as the
+  // pickup flow when ready). Yellow-tier: grades, GPA, and pickup codes are
+  // personal and only appear on the phone. The public board only initiates
+  // the secure flow.
+  'pick-up-transcript': {
+    titleAr: 'استلام كشف درجات',
+    titleEn: 'Pick up transcript',
+    introAr:
+      'لإكمال طلب كشف الدرجات، تحتاج إلى التحقق من هويتك عبر قناة خاصة. لن يتم عرض الدرجات أو المعدل أو محتوى الكشف على هذه الشاشة.',
+    introEn:
+      'To complete a transcript request, verify your identity through a private channel. Grades, GPA, and transcript content will not be displayed on this screen.',
+    stepsAr: [
+      'التحقق من هويتك عبر القناة الخاصة',
+      'استعراض الكشف على جوالك',
+      'استلام نسخة رقمية أو رمز الاستلام',
+      'التوجه لنقطة الاستلام إذا اخترت نسخة ورقية',
+    ],
+    stepsEn: [
+      'Verify your identity through the private channel',
+      'View the transcript on your phone',
+      'Receive a digital copy or a pickup code',
+      'Head to the pickup point if you chose a paper copy',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'الذكاء الاصطناعي لا يعرض درجاتك أو معدلك على هذه الشاشة. كل تفاصيل الكشف تصل إليك على جوالك بعد التحقق.',
+    noticeEn:
+      'The AI assistant does not show grades or GPA on this screen. All transcript details reach you on your phone after verification.',
+    badgeAr: 'يحتاج تحقق آمن',
+    badgeEn: 'Secure verification required',
+    badgeSupportAr:
+      'كشف الدرجات بيانات أكاديمية شخصية. يتم عرضه فقط على جوالك بعد التحقق من الهوية.',
+    badgeSupportEn:
+      'A transcript is personal academic data. It is shown only on your phone after identity verification.',
     ctaAr: 'المتابعة الآمنة عبر QR',
     ctaEn: 'Secure continuation via QR',
   },
