@@ -20,6 +20,8 @@ import { QRContinuation } from './pages/QRContinuation';
 import { QRSuccess } from './pages/QRSuccess';
 import { QRExpired } from './pages/QRExpired';
 import { Refusal } from './pages/Refusal';
+import { RoomAvailability } from './pages/RoomAvailability';
+import { TodaysEvents } from './pages/TodaysEvents';
 import { ErrorScreen } from './pages/ErrorScreen';
 import { SessionEnded } from './pages/SessionEnded';
 import { TimeoutModal } from './components/board/TimeoutModal';
@@ -94,6 +96,12 @@ export default function App() {
 
           {/* S15 · QR expired */}
           <Route path="/qr/expired" element={<QRExpired />} />
+
+          {/* Public-safe room availability (Scenario #054 — parallel to "Reserve a hall"). */}
+          <Route path="/rooms/availability" element={<RoomAvailability />} />
+
+          {/* Public-safe today's events list (Scenario #053 — Event FAQ Bot). */}
+          <Route path="/events/today" element={<TodaysEvents />} />
 
           {/* S16 · Sensitive data refusal */}
           <Route path="/refusal" element={<Refusal />} />

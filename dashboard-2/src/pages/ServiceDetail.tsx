@@ -228,6 +228,7 @@ export function ServiceDetail() {
                 const target =
                   a.id === 'graduation-certificate' ? '/request/graduation'
                   : a.id === 'enrollment-letter' ? '/request/enrollment'
+                  : a.id === 'todays-events' ? '/events/today'
                   : a.tier === 'black' ? '/refusal'
                   : a.tier === 'yellow' ? `/start-request/${service.id}?action=${a.id}`
                   : `/assistant/answer/${service.id}`;

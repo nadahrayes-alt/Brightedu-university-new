@@ -57,6 +57,11 @@ interface ScenarioCopy {
   /** Optional override for the primary CTA. */
   ctaAr?: string;
   ctaEn?: string;
+  /** Optional secondary CTA — e.g. a public-safe alternative path
+   *  ("Browse available rooms" alongside "Start booking request"). */
+  secondaryCtaAr?: string;
+  secondaryCtaEn?: string;
+  secondaryRoute?: string;
 }
 
 const BADGE_ICONS = {
@@ -219,6 +224,87 @@ const SCENARIO_COPY: Record<string, ScenarioCopy> = {
     ctaEn: 'Secure continuation via QR',
   },
 
+  // Scenario #054 — Room Booking. Yellow-tier: AI prepares & checks availability,
+  // staff approves the actual reservation. Public board exposes a parallel
+  // "browse availability" path that needs no QR or ID.
+  'reserve-a-hall': {
+    titleAr: 'حجز قاعة',
+    titleEn: 'Room booking',
+    introAr:
+      'يمكنك استعراض القاعات المتاحة على اللوحة، ولإرسال طلب حجز رسمي تحتاج إلى التحقق من رقمك الجامعي ثم إكمال التفاصيل من جوالك.',
+    introEn:
+      'You can browse available rooms on this board. To submit an official booking request, verify your University ID and complete the details on your phone.',
+    stepsAr: [
+      'اختيار القاعة',
+      'تحديد التاريخ والوقت',
+      'إدخال سبب الحجز',
+      'رفع المرفقات إن وجدت',
+      'إرسال الطلب لاعتماد الموظف',
+    ],
+    stepsEn: [
+      'Pick the room',
+      'Set the date and time',
+      'Enter the booking reason',
+      'Upload attachments if any',
+      'Submit the request for staff approval',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن يقوم المساعد الذكي بتأكيد الحجز تلقائيًا. الموظف يعتمد طلب الحجز قبل تثبيت القاعة.',
+    noticeEn:
+      'The AI assistant does not confirm the booking automatically. A staff member approves the request before the room is reserved.',
+    badgeAr: 'يحتاج اعتماد الموظف',
+    badgeEn: 'Needs staff approval',
+    badgeSupportAr:
+      'الذكاء الاصطناعي يجهّز الطلب ويتحقق من توفّر القاعة، والموظف هو من يعتمد الحجز نهائيًا.',
+    badgeSupportEn:
+      'The AI assistant prepares the request and checks room availability; a staff member approves the booking.',
+    ctaAr: 'بدء طلب حجز',
+    ctaEn: 'Start booking request',
+    secondaryCtaAr: 'استعراض القاعات المتاحة',
+    secondaryCtaEn: 'Browse available rooms',
+    secondaryRoute: '/rooms/availability',
+  },
+
+  // Scenario #046 — Event Registration Assistant. Yellow-tier: registration
+  // ties an event seat to a specific student, so the public board only
+  // initiates the private flow. Selection + confirmation happen on the phone.
+  'event-registration': {
+    titleAr: 'التسجيل في فعالية',
+    titleEn: 'Event registration',
+    introAr:
+      'لإكمال التسجيل في الفعالية، نحتاج التحقق من رقمك الجامعي ثم تتمّ تأكيد المقعد من جوالك. اللوحة العامة لا تحفظ بياناتك.',
+    introEn:
+      'To complete event registration, we need to verify your University ID and your seat is then confirmed on your phone. The public board does not store your data.',
+    stepsAr: [
+      'التحقق من هويتك',
+      'مراجعة تفاصيل الفعالية',
+      'تأكيد المقعد على جوالك',
+      'استلام تذكرة الحضور',
+    ],
+    stepsEn: [
+      'Verify your identity',
+      'Review the event details',
+      'Confirm the seat on your phone',
+      'Receive your attendance ticket',
+    ],
+    stepsTitleAr: 'ما الذي ستكمله على جوالك؟',
+    stepsTitleEn: 'What will you complete on your phone?',
+    noticeAr:
+      'لن تظهر تفاصيل الحضور أو رقم المقعد على هذه اللوحة. التذكرة تصل إلى جوالك بعد التحقق.',
+    noticeEn:
+      'Attendance details and seat number never appear on this board. The ticket reaches your phone after verification.',
+    badgeAr: 'يحتاج تحقق خاص',
+    badgeEn: 'Private verification required',
+    badgeSupportAr:
+      'تأكيد المقعد يربط الفعالية برقمك الجامعي، ويتم التأكيد بشكل خاص على جوالك بعد التحقق.',
+    badgeSupportEn:
+      'Seat confirmation ties the event to your University ID; it is finalised privately on your phone after verification.',
+    ctaAr: 'المتابعة الآمنة عبر QR',
+    ctaEn: 'Secure continuation via QR',
+  },
+
   // Re-enrollment — sensitive admissions-related flow that requires a human
   // decision. Not part of the original 100-scenario pack; treated as a Red-tier
   // pre-handoff: the public board only collects the request and explains the
@@ -352,6 +438,8 @@ export function StartRequest() {
   const cta = lang === 'ar'
     ? (copy.ctaAr ?? 'المتابعة عبر QR')
     : (copy.ctaEn ?? 'Continue via QR');
+  const secondaryCta = lang === 'ar' ? copy.secondaryCtaAr : copy.secondaryCtaEn;
+  const secondaryRoute = copy.secondaryRoute;
 
   return (
     <div>
@@ -417,11 +505,16 @@ export function StartRequest() {
           ))}
         </ol>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-wrap">
           <Button variant="privacy" onClick={() => navigate('/verify')}>
             <span>{cta}</span>
             <ArrowIcon className="w-6 h-6" />
           </Button>
+          {secondaryCta && secondaryRoute && (
+            <Button variant="secondary" onClick={() => navigate(secondaryRoute)}>
+              <span>{secondaryCta}</span>
+            </Button>
+          )}
           <Link to="/">
             <Button variant="cancel">{lang === 'ar' ? 'الرجوع' : 'Back'}</Button>
           </Link>
